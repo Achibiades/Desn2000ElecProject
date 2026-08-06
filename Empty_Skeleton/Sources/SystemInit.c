@@ -152,8 +152,8 @@ unsigned short map_pixel(unsigned short x, short in_min, short in_max, short out
 }
 
 int touch_rect(unsigned short x0, unsigned short y0, unsigned short x1, unsigned short y1, unsigned short x_num, unsigned short y_num) {
-        int y0_read = y0 * 240 / 320;
-        int y1_read = y1 * 240 / 320;
+        int y0_read = y0 * 3 / 4;
+        int y1_read = y1 * 3 / 4;
         return (x_num >= x0 && x_num <= x1 && y_num >= y0_read && y_num <= y1_read);
 }
 
