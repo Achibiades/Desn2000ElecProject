@@ -12,14 +12,14 @@ void draw_home_screen() {
     lcd_fillRect(130, 230, 220, 300, LIGHT_GRAY);
 
     lcd_fontColor(BLACK, WHITE);
-    lcd_putString(100, 30, (unsigned char *)"Welcome GUEST!");
+    lcd_putString(90, 30, (unsigned char *)"Welcome GUEST!");
 
     lcd_fontColor(BLACK, LIGHT_GRAY);
-	lcd_putString(20, 50, (unsigned char *)"COFFEE");
-    lcd_putString(20, 140, (unsigned char *)"LIGHT");
-    lcd_putString(20, 230, (unsigned char *)"TEMP");
-    lcd_putString(130, 50, (unsigned char *)"ALARM");
-    lcd_putString(130, 140, (unsigned char *)"LOCK");
-    lcd_putString(130, 230, (unsigned char *)"SOUND");
+	lcd_putString(45, 80, (unsigned char *)"COFFEE");
+    lcd_putString(45, 170, (unsigned char *)"LIGHT");
+    lcd_putString(45, 260, (unsigned char *)"TEMP");
+    lcd_putString(155, 80, (unsigned char *)"ALARM");
+    lcd_putString(155, 170, (unsigned char *)"LOCK");
+    lcd_putString(155, 260, (unsigned char *)"SOUND");
 
 }
