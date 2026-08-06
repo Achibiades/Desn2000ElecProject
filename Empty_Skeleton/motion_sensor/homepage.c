@@ -10,5 +10,13 @@ void draw_home_screen() {
     lcd_fillRect(130, 140, 220, 210, LIGHT_GRAY);
     lcd_fillRect(130, 230, 220, 300, LIGHT_GRAY);
 
-	lcd_putString(60, 290, (unsigned char *)"Hello ACHI!");
+    lcd_putString(30, 30, (unsigned char *)"Hello ACHI!");
+
+	lcd_putString(20, 50, (unsigned char *)"Hello ACHI!");
+    lcd_putString(20, 140, (unsigned char *)"Hello ACHI!");
+    lcd_putString(20, 230, (unsigned char *)"Hello ACHI!");
+    lcd_putString(130, 50, (unsigned char *)"Hello ACHI!");
+    lcd_putString(130, 140, (unsigned char *)"Hello ACHI!");
+    lcd_putString(130, 230, (unsigned char *)"Hello ACHI!");
+
 }
