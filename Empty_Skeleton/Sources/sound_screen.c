@@ -1,5 +1,6 @@
 #include "../Headers/stm32f103xe.h"
 #include "../LCD/lcd_grph.h"
+#include "../Headers/draw_screens.h"
 
 void draw_sound_screen() {
     lcd_fillScreen(WHITE);

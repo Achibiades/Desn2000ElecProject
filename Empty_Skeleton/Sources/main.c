@@ -3,6 +3,7 @@
 #include "../LCD/lcd_hw.h"
 #include "../LCD/lcd_grph.h"
 #include "../Headers/SystemInit.h"
+#include "../Headers/draw_screens.h"
 #include <stdio.h>
 
 int main() {
@@ -38,7 +39,7 @@ int main() {
             } else if (curr_ui == 5) {
                 draw_lock_screen();
             } else if (curr_ui == 6) {
-                draw_sound_screen(); 
+                draw_sound_screen();
             }
 
             // Update prev_ui so it doesn't draw again until curr_ui changes
