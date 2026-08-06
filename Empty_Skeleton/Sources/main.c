@@ -4,8 +4,6 @@
 #include "../LCD/lcd_grph.h"
 
 int main() {
-    lcd_setup();
-    spi_init();
 
     int x_coord = 0;
     int y_coord = 0;
@@ -13,6 +11,9 @@ int main() {
     int curr_ui = 0;
     int prev_ui = -1; // Initialize to -1 so the home screen draws on the very first loop
     int was_touched = 0;
+
+	lcd_setup();
+    spi_init();
 
     while (1) {
 
