@@ -90,7 +90,7 @@ int main() {
 					lcd_putString(10,10, (unsigned char *)str);
 
                 } else {
-					if (touch_rect(30, 20, 50,40, x_coord, y_coord)) {
+					if (touch_rect(30, 10, 80, 40, x_coord, y_coord)) {
 						curr_ui = 0;
 					}
 				}

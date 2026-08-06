@@ -12,7 +12,7 @@ void draw_home_screen() {
     lcd_fillRect(130, 230, 220, 300, LIGHT_GRAY);
 
     lcd_fontColor(BLACK, WHITE);
-    lcd_putString(30, 30, (unsigned char *)"Welcome GUEST!");
+    lcd_putString(100, 30, (unsigned char *)"Welcome GUEST!");
 
     lcd_fontColor(BLACK, LIGHT_GRAY);
 	lcd_putString(20, 50, (unsigned char *)"COFFEE");
