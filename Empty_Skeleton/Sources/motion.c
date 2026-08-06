@@ -1,3 +1,4 @@
+/*
 #include "../Headers/stm32f103xe.h"
 
 #define OUTSIDE   (1 << 7)   // SW1, Port C
@@ -68,4 +69,4 @@ int main(void) {
             break;
         }
     }
-}
+} */
