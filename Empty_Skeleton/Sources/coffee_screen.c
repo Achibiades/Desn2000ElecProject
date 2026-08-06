@@ -4,6 +4,11 @@
 
 void draw_coffee_screen() {
     lcd_fillScreen(WHITE);
+    lcd_fillRect(30, 20, 50,40, CYAN);
+    lcd_fontColor(BLACK, CYAN);
+    lcd_putString(30, 30, (unsigned char *)"Return");
+
+
     lcd_fillRect(20, 50, 110, 120, LIGHT_GRAY);
     lcd_fillRect(20, 140, 110, 210, LIGHT_GRAY);
     lcd_fillRect(20, 230, 110, 300, LIGHT_GRAY);

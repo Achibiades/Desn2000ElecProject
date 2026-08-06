@@ -89,12 +89,17 @@ int main() {
 					lcd_fontColor(WHITE,BLACK);
 					lcd_putString(10,10, (unsigned char *)str);
 
-                }
+                } else {
+					if (touch_rect(30, 20, 50,40, x_coord, y_coord)) {
+						curr_ui = 0;
+					}
+				}
 
-				/*
+
                 // --- OTHER PAGES TOUCH LOGIC ---
                 // Assigning the return value to curr_ui so these functions can navigate back to home (0)
-                else if (curr_ui == 1) {
+
+                /*else if (curr_ui == 1) {
                     curr_ui = coffee_logic();
                 } else if (curr_ui == 2) {
                     curr_ui = light_logic();
@@ -106,7 +111,7 @@ int main() {
                     curr_ui = security_logic();
                 } else if (curr_ui == 6) {
                     curr_ui = sound_logic();
-                } */
+                }*/
 
             }
 

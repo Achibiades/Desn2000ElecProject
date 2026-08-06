@@ -4,6 +4,10 @@
 
 void draw_alarm_screen() {
     lcd_fillScreen(WHITE);
+    lcd_fillRect(30, 20, 50,40, CYAN);
+    lcd_fontColor(BLACK, CYAN);
+    lcd_putString(30, 30, (unsigned char *)"Return");
+
     lcd_fillRect(20, 50, 110, 120, LIGHT_GRAY);
     lcd_fillRect(20, 140, 110, 210, LIGHT_GRAY);
     lcd_fillRect(20, 230, 110, 300, LIGHT_GRAY);
@@ -12,7 +16,7 @@ void draw_alarm_screen() {
     lcd_fillRect(130, 230, 220, 300, LIGHT_GRAY);
 
     lcd_fontColor(BLACK, WHITE);
-    lcd_putString(30, 30, (unsigned char *)"Alarm");
+    lcd_putString(100, 30, (unsigned char *)"Alarm");
 
     lcd_fontColor(BLACK, LIGHT_GRAY);
 	lcd_putString(20, 50, (unsigned char *)"COFFEE");
