@@ -3,6 +3,7 @@
 #include "../LCD/lcd_hw.h"
 #include "../LCD/lcd_grph.h"
 #include "SystemInit.c"
+#include <stdio.h>
 
 int main() {
 
@@ -81,6 +82,12 @@ int main() {
                     else if (touch_rect(130, 230, 220, 300, x_coord, y_coord)) {
                         curr_ui = 6;
                     }
+					char str[32];
+
+					sprintf(str, "%d", curr_ui);
+					lcd_fontColor(WHITE,BLACK);
+					lcd_putChar(10,10, (unsigned char *)str);
+
                 }
 
 				/*
