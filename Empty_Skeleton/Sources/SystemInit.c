@@ -181,3 +181,7 @@ void display_touch_coordinates(int touch_x, int touch_y) {
     // Print the string at a fixed location (x=10, y=10)
     lcd_putString(10, 10, (unsigned char *)coord_str);
 }
+
+void SystemInit() {
+    
+}

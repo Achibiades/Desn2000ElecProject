@@ -14,7 +14,7 @@ int main() {
     int prev_ui = -1; // Initialize to -1 so the home screen draws on the very first loop
     int was_touched = 0;
 
-	lcd_setup();
+	lcd_init();
     spi_init();
 
     while (1) {
