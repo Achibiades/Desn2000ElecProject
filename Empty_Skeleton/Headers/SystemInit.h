@@ -5,6 +5,4 @@ int touch_rect(unsigned short x0, unsigned short y0, unsigned short x1, unsigned
 int touch_read_xy(int *x, int *y);
 void display_touch_coordinates(int touch_x, int touch_y);
 
-void SystemInit() {
-
-}
+void SystemInit();

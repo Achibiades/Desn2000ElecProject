@@ -2,7 +2,7 @@
 #include "../LCD/ili9341.h"
 #include "../LCD/lcd_hw.h"
 #include "../LCD/lcd_grph.h"
-#include "SystemInit.c"
+#include "../Headers/SystemInit.h"
 #include <stdio.h>
 
 int main() {
@@ -13,6 +13,7 @@ int main() {
     int curr_ui = 0;
     int prev_ui = -1; // Initialize to -1 so the home screen draws on the very first loop
     int was_touched = 0;
+	char str[32];
 
 	lcd_init();
     spi_init();
@@ -26,7 +27,6 @@ int main() {
             // 0=Home, 1=Coffee, 2=Light, 3=Temp, 4=Alarm, 5=Security, 6=Sound
             if (curr_ui == 0) {
                 draw_home_screen();
-				/*
             } else if (curr_ui == 1) {
                 draw_coffee_screen();
             } else if (curr_ui == 2) {
@@ -36,9 +36,9 @@ int main() {
             } else if (curr_ui == 4) {
                 draw_alarm_screen();
             } else if (curr_ui == 5) {
-                draw_security_screen();
+                draw_lock_screen();
             } else if (curr_ui == 6) {
-                draw_sound_screen(); */
+                draw_sound_screen(); 
             }
 
             // Update prev_ui so it doesn't draw again until curr_ui changes
@@ -82,11 +82,11 @@ int main() {
                     else if (touch_rect(130, 230, 220, 300, x_coord, y_coord)) {
                         curr_ui = 6;
                     }
-					char str[32];
+
 
 					sprintf(str, "%d", curr_ui);
 					lcd_fontColor(WHITE,BLACK);
-					lcd_putChar(10,10, (unsigned char *)str);
+					lcd_putString(10,10, (unsigned char *)str);
 
                 }
 
