@@ -152,7 +152,9 @@ unsigned short map_pixel(unsigned short x, short in_min, short in_max, short out
 }
 
 int touch_rect(unsigned short x0, unsigned short y0, unsigned short x1, unsigned short y1, unsigned short x_num, unsigned short y_num) {
-        return (x_num >= x0 && x_num <= x1 && y_num >= y0 && y_num <= y1);
+        int y0_read = y0 * 240 / 320;
+        int y1_read = y1 * 240 / 320;
+        return (x_num >= x0 && x_num <= x1 && y_num >= y0_read && y_num <= y1_read);
 }
 
 int touch_read_xy(int *x, int *y) {
@@ -183,5 +185,5 @@ void display_touch_coordinates(int touch_x, int touch_y) {
 }
 
 void SystemInit() {
-    
+
 }

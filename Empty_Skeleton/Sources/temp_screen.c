@@ -5,7 +5,7 @@
 void draw_temp_screen() {
     lcd_fillScreen(WHITE);
 
-    lcd_fillRect(30, 20, 50,40, CYAN);
+    lcd_fillRect(30, 20, 80, 40, CYAN);
     lcd_fontColor(BLACK, CYAN);
     lcd_putString(30, 30, (unsigned char *)"Return");
 
@@ -17,7 +17,7 @@ void draw_temp_screen() {
     lcd_fillRect(130, 230, 220, 300, LIGHT_GRAY);
 
     lcd_fontColor(BLACK, WHITE);
-    lcd_putString(30, 30, (unsigned char *)"Temp");
+    lcd_putString(30, 100, (unsigned char *)"Temp");
 
     lcd_fontColor(BLACK, LIGHT_GRAY);
 	lcd_putString(20, 50, (unsigned char *)"COFFEE");

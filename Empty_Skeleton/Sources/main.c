@@ -85,7 +85,7 @@ int main() {
                     }
 
 
-					sprintf(str, "%d", curr_ui);
+					sprintf(str, "%d, %d, %d", curr_ui, x_coord, y_coord);
 					lcd_fontColor(WHITE,BLACK);
 					lcd_putString(10,10, (unsigned char *)str);
 

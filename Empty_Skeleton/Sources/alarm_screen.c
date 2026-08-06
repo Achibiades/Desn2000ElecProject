@@ -4,7 +4,7 @@
 
 void draw_alarm_screen() {
     lcd_fillScreen(WHITE);
-    lcd_fillRect(30, 20, 50,40, CYAN);
+    lcd_fillRect(30, 20, 80, 40, CYAN);
     lcd_fontColor(BLACK, CYAN);
     lcd_putString(30, 30, (unsigned char *)"Return");
 
