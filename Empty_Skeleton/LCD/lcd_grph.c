@@ -782,3 +782,84 @@ void HSVtoRGB(
             break;
     }
 }
+
+/*****************************************************************************
+ *
+ * Description:
+ *    Draw a character on the display, scaled up by an integer factor.
+ *    Each font pixel becomes a (scale x scale) filled block.
+ *
+ * Params:
+ *    [in] x, y   - top-left of the character cell
+ *    [in] ch     - the character
+ *    [in] scale  - integer scale factor (1 = same as lcd_putChar)
+ *
+ ****************************************************************************/
+unsigned char lcd_putChar_scaled(
+    unsigned short x,
+    unsigned short y,
+    unsigned char ch,
+    unsigned char scale)
+{
+    unsigned char data = 0;
+    unsigned char i = 0, j = 0;
+    lcd_color_t color = BLACK;
+
+    if (scale == 0) {
+			scale = 1; 
+    }
+
+    /* bound check using the same margin style as lcd_putChar */
+    if ((x >= (DISPLAY_WIDTH - 8 * scale)) || (y >= (DISPLAY_HEIGHT - 8 * scale))) {
+        return 0;
+    }
+
+    if ((ch < 0x20) || (ch > 0x7f)) {
+        ch = 0x20;  /* unknown character -> blank */
+    }
+
+    ch -= 0x20;
+    for (i = 0; i < 8; i++) {
+        data = font5x7[ch][i];
+        for (j = 0; j < 6; j++) {
+            if ((data & font_mask[j]) == 0) {
+                color = backgroundColor;
+            } else {
+                color = foregroundColor;
+            }
+            lcd_fillRect(x, y, x + scale - 1, y + scale - 1, color);
+            x += scale;
+        }
+        y += scale;
+        x -= 6 * scale;
+    }
+    return 1;
+}
+
+/*****************************************************************************
+ *
+ * Description:
+ *    Draw a string on the display, scaled up by an integer factor.
+ *
+ * Params:
+ *    [in] x, y   - top-left of the first character
+ *    [in] pStr   - the string
+ *    [in] scale  - integer scale factor
+ *
+ ****************************************************************************/
+void lcd_putString_scaled(
+    unsigned short x,
+    unsigned short y,
+    unsigned char *pStr,
+    unsigned char scale)
+{
+    if (scale == 0) scale = 1;
+
+    while (*pStr != '\0') {
+        if (lcd_putChar_scaled(x, y, *pStr++, scale) == 0) {
+            break;
+        }
+        x += 6 * scale;
+    }
+    return;
+}

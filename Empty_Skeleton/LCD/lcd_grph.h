@@ -74,6 +74,8 @@ void lcd_fontColor(lcd_color_t foreground, lcd_color_t background);
 void lcd_picture(unsigned short x, unsigned short y, unsigned short width, unsigned short height, unsigned short *pPicture);
 
 void lcd_picture_scaled(unsigned short x, unsigned short y, unsigned short width, unsigned short height, unsigned short scale, unsigned short *pPicture);
+unsigned char lcd_putChar_scaled(unsigned short x, unsigned short y, unsigned char ch, unsigned char scale);
+void          lcd_putString_scaled(unsigned short x, unsigned short y, unsigned char *pStr, unsigned char scale);
 
 
 
