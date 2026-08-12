@@ -64,6 +64,23 @@ void draw_lock_screen() {
     lcd_putString(95, 251, (unsigned char *)"LOCK ALL");
 }
 
+static void draw_lock_tile(
+    int x1,
+    int y1,
+    int x2,
+    int y2,
+    int text_x,
+    int text_y,
+    unsigned char *label,
+    int locked)
+{
+    unsigned int colour = locked ? RED : LIGHT_GRAY;
+
+    lcd_fillRect(x1, y1, x2, y2, colour);
+    lcd_fontColor(BLACK, colour);
+    lcd_putString(text_x, text_y, label);
+}
+
 void handle_lock_touch(int tx, int ty)
 {
     /* Return button */
@@ -203,21 +220,4 @@ void handle_lock_touch(int tx, int ty)
 
         return;
     }
-}
-
-static void draw_lock_tile(
-    int x1,
-    int y1,
-    int x2,
-    int y2,
-    int text_x,
-    int text_y,
-    unsigned char *label,
-    int locked)
-{
-    unsigned int colour = locked ? RED : LIGHT_GRAY;
-
-    lcd_fillRect(x1, y1, x2, y2, colour);
-    lcd_fontColor(BLACK, colour);
-    lcd_putString(text_x, text_y, label);
 }
