@@ -1,5 +1,9 @@
 #include "../LCD/lcd_grph.h"
 #include "../Headers/draw_screens.h"
+#include "../LCD/lcd_grph.h"
+#include <stdio.h>
+#include <string.h>
+#include "../Headers/SystemInit.h"
 
 /* Lock state flags */
 static int main_door_locked = 0;
@@ -60,75 +64,66 @@ void draw_lock_screen() {
     lcd_putString(95, 251, (unsigned char *)"LOCK ALL");
 }
 
-void handle_lock_touch(int tx, int ty) {
-    /* Main Door tile */
-    if (tx >= 20 && tx <= 115 && ty >= 60 && ty <= 105) {
+void handle_security_touch(int tx, int ty)
+{
+    /* Return button */
+    if (touch_rect(10, 10, 70, 40, tx, ty)) {
+        /* curr_ui = previous screen; */
+        return;
+    }
+
+    /* Main door */
+    else if (touch_rect(20, 60, 115, 105, tx, ty)) {
         main_door_locked = !main_door_locked;
-        lcd_fillRect(20, 60, 115, 105, main_door_locked ? RED : LIGHT_GRAY);
-        lcd_fontColor(BLACK, main_door_locked ? RED : LIGHT_GRAY);
-        lcd_putString(28, 76, (unsigned char *)"MAIN DOOR");
+        draw_lock_screen();
         return;
     }
 
-    /* Window 1 tile */
-    if (tx >= 125 && tx <= 220 && ty >= 60 && ty <= 105) {
+    /* Window 1 */
+    else if (touch_rect(125, 60, 220, 105, tx, ty)) {
         window1_locked = !window1_locked;
-        lcd_fillRect(125, 60, 220, 105, window1_locked ? RED : LIGHT_GRAY);
-        lcd_fontColor(BLACK, window1_locked ? RED : LIGHT_GRAY);
-        lcd_putString(140, 76, (unsigned char *)"WINDOW 1");
+        draw_lock_screen();
         return;
     }
 
-    /* Window 2 tile */
-    if (tx >= 20 && tx <= 115 && ty >= 115 && ty <= 160) {
+    /* Window 2 */
+    else if (touch_rect(20, 115, 115, 160, tx, ty)) {
         window2_locked = !window2_locked;
-        lcd_fillRect(20, 115, 115, 160, window2_locked ? RED : LIGHT_GRAY);
-        lcd_fontColor(BLACK, window2_locked ? RED : LIGHT_GRAY);
-        lcd_putString(35, 131, (unsigned char *)"WINDOW 2");
+        draw_lock_screen();
         return;
     }
 
-    /* Window 3 tile */
-    if (tx >= 125 && tx <= 220 && ty >= 115 && ty <= 160) {
+    /* Window 3 */
+    else if (touch_rect(125, 115, 220, 160, tx, ty)) {
         window3_locked = !window3_locked;
-        lcd_fillRect(125, 115, 220, 160, window3_locked ? RED : LIGHT_GRAY);
-        lcd_fontColor(BLACK, window3_locked ? RED : LIGHT_GRAY);
-        lcd_putString(140, 131, (unsigned char *)"WINDOW 3");
+        draw_lock_screen();
         return;
     }
 
-    /* Window 4 tile */
-    if (tx >= 20 && tx <= 115 && ty >= 170 && ty <= 215) {
+    /* Window 4 */
+    else if (touch_rect(20, 170, 115, 215, tx, ty)) {
         window4_locked = !window4_locked;
-        lcd_fillRect(20, 170, 115, 215, window4_locked ? RED : LIGHT_GRAY);
-        lcd_fontColor(BLACK, window4_locked ? RED : LIGHT_GRAY);
-        lcd_putString(35, 186, (unsigned char *)"WINDOW 4");
+        draw_lock_screen();
         return;
     }
 
-    /* Window 5 tile */
-    if (tx >= 125 && tx <= 220 && ty >= 170 && ty <= 215) {
+    /* Window 5 */
+    else if (touch_rect(125, 170, 220, 215, tx, ty)) {
         window5_locked = !window5_locked;
-        lcd_fillRect(125, 170, 220, 215, window5_locked ? RED : LIGHT_GRAY);
-        lcd_fontColor(BLACK, window5_locked ? RED : LIGHT_GRAY);
-        lcd_putString(140, 186, (unsigned char *)"WINDOW 5");
+        draw_lock_screen();
         return;
     }
 
-    /* Lock all button */
-    if (tx >= 20 && tx <= 220 && ty >= 215 && ty <= 325) {
+    /* Lock all */
+    else if (touch_rect(20, 235, 220, 275, tx, ty)) {
         main_door_locked = 1;
         window1_locked = 1;
         window2_locked = 1;
         window3_locked = 1;
         window4_locked = 1;
         window5_locked = 1;
-        draw_lock_screen();  /* simplest to just redraw everything here */
-        return;
-    }
 
-    /* Return button */
-    if (tx >= 10 && tx <= 70 && ty >= 10 && ty <= 40) {
-        /* navigate back to previous screen */
+        draw_lock_screen();
+        return;
     }
 }
