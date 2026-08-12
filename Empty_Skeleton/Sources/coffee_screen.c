@@ -69,7 +69,7 @@ void handle_coffee_touch(int tx, int ty)
 {
     /* Return button */
     if (touch_rect(10, 10, 70, 40, tx, ty)) {
-        /* curr_ui = previous screen; */
+        curr_ui = 0;
         return;
     }
 
