@@ -13,6 +13,8 @@ static int window5_locked   = 0;
 void draw_lock_screen() {
     lcd_fillScreen(WHITE);
 
+    //teaching will git
+
     /* Return button */
     lcd_fillRect(10, 10, 70, 40, LIGHT_GRAY);
     lcd_fontColor(BLACK, LIGHT_GRAY);
