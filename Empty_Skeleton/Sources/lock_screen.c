@@ -64,7 +64,7 @@ void draw_lock_screen() {
     lcd_putString(95, 251, (unsigned char *)"LOCK ALL");
 }
 
-void handle_security_touch(int tx, int ty)
+void handle_lock_touch(int tx, int ty)
 {
     /* Return button */
     if (touch_rect(10, 10, 70, 40, tx, ty)) {
