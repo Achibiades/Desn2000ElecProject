@@ -4,7 +4,7 @@
 
 void draw_alarm_screen() {
     lcd_fillScreen(WHITE);
-
+    // hiiiiiii
     /* Return button */
     lcd_fillRect(10, 10, 70, 40, LIGHT_GRAY);
     lcd_fontColor(BLACK, LIGHT_GRAY);
