@@ -7,6 +7,11 @@ void draw_alarm_time(int hour, int minute, int x, int y);
 void draw_alarm_state(int alarm_enable);
 int check_time(char *time_str, int hour, int minute);
 
+//lock logic
+void lock_led_init(void);
+void draw_lock_screen(void);
+void handle_lock_touch(int tx, int ty);
+
 void draw_lock_screen();
 void draw_coffee_screen();
 void draw_home_screen();
