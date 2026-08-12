@@ -31,6 +31,9 @@ int main() {
     spi_init();
     rtc_init();
 
+	/* Configure PF5 after the other GPIO initialization */
+    lock_led_init();
+
     while (1) {
 
         // Keep the live clock current every loop -- this is what check_time()
