@@ -2,6 +2,7 @@
 #include "../LCD/ili9341.h"
 #include "../LCD/lcd_hw.h"
 #include "../LCD/lcd_grph.h"
+#include "../Headers/motion.h"
 #include "../Headers/SystemInit.h"
 #include "../Headers/draw_screens.h"
 #include "../Headers/rtc.h"
@@ -33,6 +34,8 @@ int main() {
     int alarm_enable = 0;
     int wakeup_sunrise = 0;
 
+    int inside = 0;   // 0 = outside, 1 = inside
+
     char time_str[6];
     char date_str[6];
 
@@ -40,11 +43,12 @@ int main() {
     spi_init();
     rtc_init();
     lock_led_init();
+    motion_init();
 
     while (1) {
 
         get_real_time(time_str, date_str);
-
+        motion_update(&inside);
         check_alarm(time_str, alarm_hour, alarm_minute, &alarm_enable, curr_ui);
 
         if (curr_ui != prev_ui) {
