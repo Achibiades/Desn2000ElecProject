@@ -4,8 +4,14 @@
 #include <stdio.h>
 #include <string.h>
 #include "../Headers/SystemInit.h"
+#include "../Headers/stm32f103xe.h"
+#include "../LCD/lcd_grph.h"
+#include "../Headers/draw_screens.h"
 
-/* Lock state flags */
+/* APE-board LED5 is connected to PF5 */
+#define LOCK_LED_PIN 5U
+
+/* Lock states: 0 = unlocked, 1 = locked */
 static int main_door_locked = 0;
 static int window1_locked   = 0;
 static int window2_locked   = 0;
@@ -13,57 +19,62 @@ static int window3_locked   = 0;
 static int window4_locked   = 0;
 static int window5_locked   = 0;
 
-void draw_lock_screen() {
-    lcd_fillScreen(WHITE);
 
-    /* Return button */
-    lcd_fillRect(10, 10, 70, 40, LIGHT_GRAY);
-    lcd_fontColor(BLACK, LIGHT_GRAY);
-    lcd_putString(16, 20, (unsigned char *)"return");
+/*
+ * Configure APE-board LED5 (PF5).
+ * Call this once during program initialization.
+ */
+void lock_led_init(void)
+{
+    /* Enable the GPIOF peripheral clock */
+    RCC->APB2ENR |= RCC_APB2ENR_IOPFEN;
 
-    /* Title -- 2x scale */
-    lcd_fontColor(BLACK, WHITE);
-    lcd_putString_scaled(48, 55, (unsigned char *)"CENTRAL LOCK CONTROL", 2);
+    /*
+     * Configure PF5 as:
+     * MODE5 = 10: output at 2 MHz
+     * CNF5  = 00: general-purpose push-pull
+     */
+    GPIOF->CRL &= ~(GPIO_CRL_CNF5 | GPIO_CRL_MODE5);
+    GPIOF->CRL |= GPIO_CRL_MODE5_1;
 
-    /* Subtitle */
-    lcd_putString(48, 42, (unsigned char *)"TAP TO LOCK / UNLOCK");
-
-    /* Main Door tile */
-    lcd_fillRect(20, 60, 115, 105, main_door_locked ? RED : LIGHT_GRAY);
-    lcd_fontColor(BLACK, main_door_locked ? RED : LIGHT_GRAY);
-    lcd_putString(28, 76, (unsigned char *)"MAIN DOOR");
-
-    /* Window 1 tile */
-    lcd_fillRect(125, 60, 220, 105, window1_locked ? RED : LIGHT_GRAY);
-    lcd_fontColor(BLACK, window1_locked ? RED : LIGHT_GRAY);
-    lcd_putString(140, 76, (unsigned char *)"WINDOW 1");
-
-    /* Window 2 tile */
-    lcd_fillRect(20, 115, 115, 160, window2_locked ? RED : LIGHT_GRAY);
-    lcd_fontColor(BLACK, window2_locked ? RED : LIGHT_GRAY);
-    lcd_putString(35, 131, (unsigned char *)"WINDOW 2");
-
-    /* Window 3 tile */
-    lcd_fillRect(125, 115, 220, 160, window3_locked ? RED : LIGHT_GRAY);
-    lcd_fontColor(BLACK, window3_locked ? RED : LIGHT_GRAY);
-    lcd_putString(140, 131, (unsigned char *)"WINDOW 3");
-
-    /* Window 4 tile */
-    lcd_fillRect(20, 170, 115, 215, window4_locked ? RED : LIGHT_GRAY);
-    lcd_fontColor(BLACK, window4_locked ? RED : LIGHT_GRAY);
-    lcd_putString(35, 186, (unsigned char *)"WINDOW 4");
-
-    /* Window 5 tile */
-    lcd_fillRect(125, 170, 220, 215, window5_locked ? RED : LIGHT_GRAY);
-    lcd_fontColor(BLACK, window5_locked ? RED : LIGHT_GRAY);
-    lcd_putString(140, 186, (unsigned char *)"WINDOW 5");
-
-    /* Lock all button */
-    lcd_fillRect(20, 235, 220, 275, LIGHT_GRAY);
-    lcd_fontColor(BLACK, LIGHT_GRAY);
-    lcd_putString(95, 251, (unsigned char *)"LOCK ALL");
+    /* Start with LED5 off */
+    GPIOF->BRR = (1U << LOCK_LED_PIN);
 }
 
+
+/*
+ * Return 1 only when the main door and all windows are locked.
+ */
+static int all_locks_are_locked(void)
+{
+    return main_door_locked &&
+           window1_locked &&
+           window2_locked &&
+           window3_locked &&
+           window4_locked &&
+           window5_locked;
+}
+
+
+/*
+ * LED5 indicates whether everything is locked.
+ */
+static void update_lock_led(void)
+{
+    if (all_locks_are_locked()) {
+        /* Turn LED5 on */
+        GPIOF->BSRR = (1U << LOCK_LED_PIN);
+    }
+    else {
+        /* Turn LED5 off */
+        GPIOF->BRR = (1U << LOCK_LED_PIN);
+    }
+}
+
+
+/*
+ * Draw or update one lock tile.
+ */
 static void draw_lock_tile(
     int x1,
     int y1,
@@ -74,18 +85,139 @@ static void draw_lock_tile(
     unsigned char *label,
     int locked)
 {
-    unsigned int colour = locked ? RED : LIGHT_GRAY;
+    unsigned int colour;
 
+    if (locked) {
+        colour = RED;
+    }
+    else {
+        colour = LIGHT_GRAY;
+    }
+
+    /*
+     * Filling the tile erases its old text, so the text must also
+     * be drawn again.
+     */
     lcd_fillRect(x1, y1, x2, y2, colour);
     lcd_fontColor(BLACK, colour);
     lcd_putString(text_x, text_y, label);
 }
 
+
+/*
+ * Draw all six lock tiles.
+ */
+static void draw_all_lock_tiles(void)
+{
+    draw_lock_tile(
+        20, 60, 115, 105,
+        28, 76,
+        (unsigned char *)"MAIN DOOR",
+        main_door_locked
+    );
+
+    draw_lock_tile(
+        125, 60, 220, 105,
+        140, 76,
+        (unsigned char *)"WINDOW 1",
+        window1_locked
+    );
+
+    draw_lock_tile(
+        20, 115, 115, 160,
+        35, 131,
+        (unsigned char *)"WINDOW 2",
+        window2_locked
+    );
+
+    draw_lock_tile(
+        125, 115, 220, 160,
+        140, 131,
+        (unsigned char *)"WINDOW 3",
+        window3_locked
+    );
+
+    draw_lock_tile(
+        20, 170, 115, 215,
+        35, 186,
+        (unsigned char *)"WINDOW 4",
+        window4_locked
+    );
+
+    draw_lock_tile(
+        125, 170, 220, 215,
+        140, 186,
+        (unsigned char *)"WINDOW 5",
+        window5_locked
+    );
+}
+
+
+/*
+ * Draw the complete lock-control screen.
+ *
+ * Call this once when entering the lock screen.
+ * Do not repeatedly call it from the main loop.
+ */
+void draw_lock_screen(void)
+{
+    lcd_fillScreen(WHITE);
+
+    /* Return button */
+    lcd_fillRect(10, 10, 70, 40, LIGHT_GRAY);
+    lcd_fontColor(BLACK, LIGHT_GRAY);
+    lcd_putString(
+        16,
+        20,
+        (unsigned char *)"return"
+    );
+
+    /* Screen heading */
+    lcd_fontColor(BLACK, WHITE);
+    lcd_putString(
+        82,
+        20,
+        (unsigned char *)"LOCK CONTROL"
+    );
+
+    lcd_putString(
+        48,
+        45,
+        (unsigned char *)"TAP TO LOCK / UNLOCK"
+    );
+
+    /* Draw the six lock controls */
+    draw_all_lock_tiles();
+
+    /* Lock-all button */
+    lcd_fillRect(20, 235, 220, 275, LIGHT_GRAY);
+    lcd_fontColor(BLACK, LIGHT_GRAY);
+    lcd_putString(
+        95,
+        251,
+        (unsigned char *)"LOCK ALL"
+    );
+
+    /* Ensure LED5 matches the current states */
+    update_lock_led();
+}
+
+
+/*
+ * Handle touchscreen presses on the lock-control screen.
+ */
 void handle_lock_touch(int tx, int ty)
 {
     /* Return button */
     if (touch_rect(10, 10, 70, 40, tx, ty)) {
-        /* curr_ui = previous screen; */
+        /*
+         * If navigation is handled here, use something like:
+         *
+         * curr_ui = 0;
+         * draw_main_screen();
+         *
+         * Otherwise, handle this button in your main UI code.
+         */
         return;
     }
 
@@ -100,6 +232,7 @@ void handle_lock_touch(int tx, int ty)
             main_door_locked
         );
 
+        update_lock_led();
         return;
     }
 
@@ -114,6 +247,7 @@ void handle_lock_touch(int tx, int ty)
             window1_locked
         );
 
+        update_lock_led();
         return;
     }
 
@@ -128,6 +262,7 @@ void handle_lock_touch(int tx, int ty)
             window2_locked
         );
 
+        update_lock_led();
         return;
     }
 
@@ -142,6 +277,7 @@ void handle_lock_touch(int tx, int ty)
             window3_locked
         );
 
+        update_lock_led();
         return;
     }
 
@@ -156,6 +292,7 @@ void handle_lock_touch(int tx, int ty)
             window4_locked
         );
 
+        update_lock_led();
         return;
     }
 
@@ -170,10 +307,11 @@ void handle_lock_touch(int tx, int ty)
             window5_locked
         );
 
+        update_lock_led();
         return;
     }
 
-    /* Lock all */
+    /* Lock everything */
     else if (touch_rect(20, 235, 220, 275, tx, ty)) {
         main_door_locked = 1;
         window1_locked = 1;
@@ -182,42 +320,13 @@ void handle_lock_touch(int tx, int ty)
         window4_locked = 1;
         window5_locked = 1;
 
-        draw_lock_tile(
-            20, 60, 115, 105, 28, 76,
-            (unsigned char *)"MAIN DOOR",
-            main_door_locked
-        );
+        /*
+         * All six states changed, so redraw all six tiles.
+         * The rest of the screen is not redrawn.
+         */
+        draw_all_lock_tiles();
 
-        draw_lock_tile(
-            125, 60, 220, 105, 140, 76,
-            (unsigned char *)"WINDOW 1",
-            window1_locked
-        );
-
-        draw_lock_tile(
-            20, 115, 115, 160, 35, 131,
-            (unsigned char *)"WINDOW 2",
-            window2_locked
-        );
-
-        draw_lock_tile(
-            125, 115, 220, 160, 140, 131,
-            (unsigned char *)"WINDOW 3",
-            window3_locked
-        );
-
-        draw_lock_tile(
-            20, 170, 115, 215, 35, 186,
-            (unsigned char *)"WINDOW 4",
-            window4_locked
-        );
-
-        draw_lock_tile(
-            125, 170, 220, 215, 140, 186,
-            (unsigned char *)"WINDOW 5",
-            window5_locked
-        );
-
+        update_lock_led();
         return;
     }
 }
