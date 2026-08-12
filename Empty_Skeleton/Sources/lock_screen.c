@@ -1,4 +1,3 @@
-
 #include "../LCD/lcd_grph.h"
 #include "../Headers/draw_screens.h"
 
@@ -12,8 +11,6 @@ static int window5_locked   = 0;
 
 void draw_lock_screen() {
     lcd_fillScreen(WHITE);
-
-    //teaching will git
 
     /* Return button */
     lcd_fillRect(10, 10, 70, 40, LIGHT_GRAY);
@@ -63,7 +60,7 @@ void draw_lock_screen() {
     lcd_putString(95, 251, (unsigned char *)"LOCK ALL");
 }
 
-void handle_security_touch(int tx, int ty) {
+void handle_lock_touch(int tx, int ty) {
     /* Main Door tile */
     if (tx >= 20 && tx <= 115 && ty >= 60 && ty <= 105) {
         main_door_locked = !main_door_locked;
@@ -119,7 +116,7 @@ void handle_security_touch(int tx, int ty) {
     }
 
     /* Lock all button */
-    if (tx >= 20 && tx <= 220 && ty >= 235 && ty <= 275) {
+    if (tx >= 20 && tx <= 220 && ty >= 215 && ty <= 325) {
         main_door_locked = 1;
         window1_locked = 1;
         window2_locked = 1;

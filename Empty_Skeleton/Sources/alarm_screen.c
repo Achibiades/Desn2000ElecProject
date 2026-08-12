@@ -1,45 +1,132 @@
 #include "../Headers/stm32f103xe.h"
 #include "../LCD/lcd_grph.h"
+#include <stdio.h>
+#include <string.h>
 #include "../Headers/draw_screens.h"
 
 void draw_alarm_screen() {
     lcd_fillScreen(WHITE);
-    // hiiiiiii
-    /* Return button */
+ 
+    // Return button 
     lcd_fillRect(10, 10, 70, 40, LIGHT_GRAY);
     lcd_fontColor(BLACK, LIGHT_GRAY);
-    lcd_putString(16, 20, (unsigned char *)"return");
-
-    /* Title -- 2x scale */
+    lcd_putString(16, 21, (unsigned char *)"return");
+ 
+    // Alarm state readout, top-right
     lcd_fontColor(BLACK, WHITE);
-    lcd_putString_scaled(48, 55, (unsigned char *)"WAKE UP TIME", 2);
-
-    /* Time readout -- 4x scale */
+    lcd_putString(110, 21, (unsigned char *)"Alarm State: ");
+ 
+    // Title
+    lcd_putString_scaled(24, 55, (unsigned char *)"WAKE UP TIME", 2);
+ 
+    // Time readout 
     lcd_fillRect(30, 90, 210, 150, LIGHT_GRAY);
     lcd_fontColor(BLACK, LIGHT_GRAY);
-    lcd_putString_scaled(36, 104, (unsigned char *)"07 : 30", 4);
-
-    /* Column labels */
+    //lcd_putString_scaled(36, 104, (unsigned char *)"07 : 30", 4);
+ 
+    // Hour annd Min labels
     lcd_fontColor(BLACK, WHITE);
-    lcd_putString(40, 160, (unsigned char *)"HOUR");
-    lcd_putString(165, 160, (unsigned char *)"MIN");
-
-    /* Hour +/- tiles -- 2x scale symbols */
-    lcd_fillRect(20, 170, 105, 220, LIGHT_GRAY);
-    lcd_fillRect(20, 230, 105, 280, LIGHT_GRAY);
+    lcd_putString(49, 161, (unsigned char *)"HOUR");
+    lcd_putString(163, 161, (unsigned char *)"MIN");
+ 
+    // Hour block
+    lcd_fillRect(20, 180, 60, 220, LIGHT_GRAY);   /* hour + */
+    lcd_fillRect(70, 180, 110, 220, LIGHT_GRAY);  /* hour - */
     lcd_fontColor(BLACK, LIGHT_GRAY);
-    lcd_putString_scaled(57, 187, (unsigned char *)"+", 2);
-    lcd_putString_scaled(57, 247, (unsigned char *)"-", 2);
+    lcd_putString_scaled(32, 192, (unsigned char *)"+", 2);
+    lcd_putString_scaled(82, 192, (unsigned char *)"-", 2);
+ 
+    // Minute block
+    lcd_fillRect(130, 180, 170, 220, LIGHT_GRAY);  /* min + */
+    lcd_fillRect(180, 180, 220, 220, LIGHT_GRAY);  /* min - */
+    lcd_putString_scaled(142, 192, (unsigned char *)"+", 2);
+    lcd_putString_scaled(192, 192, (unsigned char *)"-", 2);
+ 
+    // Wake up to sunrise 
+    lcd_fillRect(20, 235, 220, 260, LIGHT_GRAY);
+    lcd_putString(44, 243, (unsigned char *)"WAKE UP TO SUNRISE");
+ 
+    // Alarm ON / OFF buttons
+    lcd_fillRect(20, 275, 110, 305, LIGHT_GRAY);
+    lcd_putString(33, 285, (unsigned char *)"Alarm ON");
+ 
+    lcd_fillRect(130, 275, 220, 305, LIGHT_GRAY);
+    lcd_putString(139, 285, (unsigned char *)"Alarm OFF");
+}
 
-    /* Minute +/- tiles -- 2x scale symbols */
-    lcd_fillRect(135, 170, 220, 220, LIGHT_GRAY);
-    lcd_fillRect(135, 230, 220, 280, LIGHT_GRAY);
-    lcd_fontColor(BLACK, LIGHT_GRAY);
-    lcd_putString_scaled(172, 187, (unsigned char *)"+", 2);
-    lcd_putString_scaled(172, 247, (unsigned char *)"-", 2);
 
-    /* Wake up to sunrise toggle */
-    lcd_fillRect(20, 290, 220, 318, LIGHT_GRAY);
+void change_minute(int *alarm_minute, int change)
+{
+    if (change == 1)
+    {
+        *alarm_minute += 5;
+        if (*alarm_minute > 55)
+        {
+            *alarm_minute = 55;
+        }
+    }
+    else
+    {
+        *alarm_minute -= 5;
+        if (*alarm_minute < 0)
+        {
+            *alarm_minute = 0;
+        }
+    }
+}
+
+void change_hour(int *alarm_hour, int change)
+{
+    if (change == 1)
+    {
+        *alarm_hour += 1;
+        if (*alarm_hour > 23)
+        {
+            *alarm_hour = 23;
+        }
+    }
+    else
+    {
+        *alarm_hour -= 1;
+        if (*alarm_hour < 0)
+        {
+            *alarm_hour = 0;
+        }
+    }
+}
+
+void draw_alarm_time(int hour, int minute, int x, int y)
+{
+    char alarm_time[6];
+    snprintf(alarm_time, 6, "%02d:%02d", hour, minute);
+
     lcd_fontColor(BLACK, LIGHT_GRAY);
-    lcd_putString(63, 300, (unsigned char *)"WAKE UP TO SUNRISE");
+    lcd_putString_scaled(x, y, (unsigned char *)alarm_time, 4);
+}
+
+// Redraws the ON/OFF value next to the "Alarm State:" label.
+// Clears the old value first so a shorter word (e.g. "ON" after "OFF")
+// doesn't leave stray characters behind.
+void draw_alarm_state(int alarm_enable)
+{
+    lcd_fillRect(205, 15, 235, 30, WHITE);
+    lcd_fontColor(BLACK, WHITE);
+
+    if (alarm_enable)
+    {
+        lcd_putString(205, 21, (unsigned char *)"ON");
+    }
+    else
+    {
+        lcd_putString(205, 21, (unsigned char *)"OFF");
+    }
+}
+
+// Compares the current time to the set alarm time
+int check_time(char *time_str, int hour, int minute)
+{
+    char alarm_time[6];
+    snprintf(alarm_time, 6, "%02d:%02d", hour, minute);
+
+    return !strcmp(time_str, alarm_time);
 }
