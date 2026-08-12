@@ -1,6 +1,7 @@
 #include "../LCD/lcd_grph.h"
 #include "../Headers/draw_screens.h"
 #include <stdio.h>
+#include "../Headers/SystemInit.h"
 
 /* Coffee mode state */
 typedef enum {
@@ -64,9 +65,16 @@ void draw_coffee_screen() {
     lcd_putString(70, 355, (unsigned char *)"NO COFFEE TODAY");
 }
 
-void handle_coffee_touch(int tx, int ty) {
+void handle_coffee_touch(int tx, int ty)
+{
+    /* Return button */
+    if (touch_rect(10, 10, 70, 40, tx, ty)) {
+        /* curr_ui = previous screen; */
+        return;
+    }
+
     /* Hour + */
-    if (tx >= 20 && tx <= 105 && ty >= 170 && ty <= 220) {
+    else if (touch_rect(20, 170, 105, 220, tx, ty)) {
         coffee_mode = COFFEE_MANUAL;
         coffee_hour = (coffee_hour + 1) % 24;
         draw_coffee_screen();
@@ -74,45 +82,48 @@ void handle_coffee_touch(int tx, int ty) {
     }
 
     /* Hour - */
-    if (tx >= 20 && tx <= 105 && ty >= 230 && ty <= 280) {
+    else if (touch_rect(20, 230, 105, 280, tx, ty)) {
         coffee_mode = COFFEE_MANUAL;
         coffee_hour = (coffee_hour + 23) % 24;
         draw_coffee_screen();
         return;
     }
 
-    /* Min + */
-    if (tx >= 135 && tx <= 220 && ty >= 170 && ty <= 220) {
+    /* Minute + */
+    else if (touch_rect(135, 170, 220, 220, tx, ty)) {
         coffee_mode = COFFEE_MANUAL;
         coffee_min = (coffee_min + 5) % 60;
         draw_coffee_screen();
         return;
     }
 
-    /* Min - */
-    if (tx >= 135 && tx <= 220 && ty >= 230 && ty <= 280) {
+    /* Minute - */
+    else if (touch_rect(135, 230, 220, 280, tx, ty)) {
         coffee_mode = COFFEE_MANUAL;
         coffee_min = (coffee_min + 55) % 60;
         draw_coffee_screen();
         return;
     }
 
-    /* Sync with wake up toggle */
-    if (tx >= 20 && tx <= 220 && ty >= 290 && ty <= 330) {
-        coffee_mode = (coffee_mode == COFFEE_SYNC_WAKEUP) ? COFFEE_MANUAL : COFFEE_SYNC_WAKEUP;
+    /* Sync with wake-up toggle */
+    else if (touch_rect(20, 290, 220, 330, tx, ty)) {
+        coffee_mode =
+            (coffee_mode == COFFEE_SYNC_WAKEUP)
+            ? COFFEE_MANUAL
+            : COFFEE_SYNC_WAKEUP;
+
         draw_coffee_screen();
         return;
     }
 
     /* No coffee toggle */
-    if (tx >= 20 && tx <= 220 && ty >= 340 && ty <= 380) {
-        coffee_mode = (coffee_mode == COFFEE_OFF) ? COFFEE_MANUAL : COFFEE_OFF;
+    else if (touch_rect(20, 340, 220, 380, tx, ty)) {
+        coffee_mode =
+            (coffee_mode == COFFEE_OFF)
+            ? COFFEE_MANUAL
+            : COFFEE_OFF;
+
         draw_coffee_screen();
         return;
-    }
-
-    /* Return button */
-    if (tx >= 10 && tx <= 70 && ty >= 10 && ty <= 40) {
-        /* navigate back to previous screen */
     }
 }
