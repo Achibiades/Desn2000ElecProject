@@ -69,10 +69,12 @@ int sun_is_out(void) {
 
 temp_state_t temp_get_state(int target_temp) {
     int adc_val;
+    int temp_c;
+    int diff;
 	adc_val = readADC(TEMP_SENSOR);
-    int temp_c  = (adc_val + 1) / 82 - 15;   // maps ~0..4095 -> ~ -15..35 C
+    temp_c  = (adc_val + 1) / 82 - 15;   // maps ~0..4095 -> ~ -15..35 C
 
-    int diff = temp_c - target_temp;
+    diff = temp_c - target_temp;
     if (diff > 1)  return TEMP_COOL;    // too hot
     if (diff < -1) return TEMP_HEAT;   // too cold
     return TEMP_IDLE;                   // within 1 degree -> in range

@@ -72,14 +72,14 @@ void heating_init(void) {
 // passive-only window it stays off.
 void check_climate(unsigned int now, int systems_active,
                    temp_state_t *prev_state, unsigned int *state_since, int desired_temp) {
-
+    temp_state_t s;
     if (!systems_active) {
         rgb1_off();
         close_blinds();
         return;
     }
 
-    temp_state_t s = temp_get_state(desired_temp);
+    s = temp_get_state(desired_temp);
 
     // A state change restarts the 5s passive-settle window
     if (s != *prev_state) {
