@@ -20,6 +20,5 @@ void draw_home_screen() {
     lcd_putString(45, 260, (unsigned char *)"TEMP");
     lcd_putString(155, 80, (unsigned char *)"ALARM");
     lcd_putString(155, 170, (unsigned char *)"LOCK");
-    lcd_putString(155, 260, (unsigned char *)"SOUND");
 
 }
