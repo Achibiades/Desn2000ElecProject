@@ -31,3 +31,9 @@ void draw_temp_screen(void);
 void draw_desired_temp(int temp, int x, int y);
 void change_temp(int *desired_temp, int change);
 void handle_temp_touch(int x_coord, int y_coord, int *curr_ui, int *desired_temp);
+
+//coffee logic
+void draw_coffee_screen(int hour, int minute);
+void handle_coffee_touch(int tx, int ty, int *hour, int *minute);
+void coffee_init(void);
+void check_coffee(char *time_str, int hour, int minute, int sunrise_detected);
