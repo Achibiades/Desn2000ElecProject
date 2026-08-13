@@ -167,7 +167,7 @@ void handle_touch(int x_coord, int y_coord, int *curr_ui,
         if (touch_rect(10, 10, 70, 40, x_coord, y_coord)) {
             *curr_ui = 0;
         } else {
-            //*curr_ui = light_logic();
+            handle_light_touch(x_coord, y_coord);
         }
 
     } else if (*curr_ui == 3) {
