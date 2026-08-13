@@ -175,3 +175,10 @@ unsigned int rtc_get_epoch(void) {
     while (!(RTC->CRL & RTC_CRL_RSF)) {}
     return ((unsigned int)RTC->CNTH << 16) | (RTC->CNTL & 0xFFFF);
 }
+
+void draw_current_time(char *time_str, char *date_str) {
+    lcd_fillRect(130, 230, 220, 300, LIGHT_GRAY);
+    lcd_fontColor(BLACK, LIGHT_GRAY);
+    lcd_putString_scaled(145, 245, (unsigned char *)time_str, 2);
+    lcd_putString(150, 275, (unsigned char *)date_str);
+}
