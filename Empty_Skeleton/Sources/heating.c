@@ -114,3 +114,10 @@ void check_climate(unsigned int now, int systems_active,
         }
     }
 }
+
+void heating_off(void) {
+    rgb1_off();
+}
+
+void heating_on(void) {
+}

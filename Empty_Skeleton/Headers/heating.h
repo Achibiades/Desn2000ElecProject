@@ -16,5 +16,6 @@ void heating_init(void);
 // is 0 (house shut down).
 void check_climate(unsigned int now, int systems_active,
                    temp_state_t *prev_state, unsigned int *state_since, int desired_temp);
-
+void heating_off(void);
+void heating_on(void);
 #endif

@@ -259,7 +259,7 @@ void handle_alarm_touch(int x_coord, int y_coord, int *curr_ui,
 void shutdown_all(int *systems_active) {
     // TODO:
     lock_all();
-    // heating_off();
+    heating_off();
     // lights_off();
     *systems_active = 0;
 }
@@ -294,7 +294,7 @@ void check_auto_shutdown(int ev, int touched, int inside_active, unsigned int no
 void startup_all(int *systems_active) {
     // TODO:
     unlock_all();
-    // heating_on();
+    heating_on();
     // lights_on();
     *systems_active = 1;
 }
