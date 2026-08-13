@@ -67,14 +67,9 @@ void draw_coffee_screen() {
 
 void handle_coffee_touch(int tx, int ty)
 {
-    /* Return button */
-    if (touch_rect(10, 10, 70, 40, tx, ty)) {
-        curr_ui = 0;
-        return;
-    }
 
     /* Hour + */
-    else if (touch_rect(20, 170, 105, 220, tx, ty)) {
+    if (touch_rect(20, 170, 105, 220, tx, ty)) {
         coffee_mode = COFFEE_MANUAL;
         coffee_hour = (coffee_hour + 1) % 24;
         draw_coffee_screen();
