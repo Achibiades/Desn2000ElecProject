@@ -6,6 +6,9 @@ void change_hour(int *alarm_hour, int change);
 void draw_alarm_time(int hour, int minute, int x, int y);
 void draw_alarm_state(int alarm_enable);
 int check_time(char *time_str, int hour, int minute);
+void handle_alarm_touch(int x_coord, int y_coord, int *curr_ui,
+                        int *alarm_hour, int *alarm_minute,
+                        int *alarm_enable, int *wakeup_sunrise);
 
 //lock logic
 void lock_led_init(void);
