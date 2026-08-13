@@ -9,7 +9,7 @@
 #include "../Headers/rtc.h"
 #include <stdio.h>
 
-#define SHUTDOWN_TIMEOUT_S 300
+#define SHUTDOWN_TIMEOUT_S 10
 
 // Forward declarations -- definitions live underneath main
 void check_alarm(char *time_str, int alarm_hour, int alarm_minute,
