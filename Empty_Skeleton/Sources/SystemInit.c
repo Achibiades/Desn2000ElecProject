@@ -187,13 +187,33 @@ void display_touch_coordinates(int touch_x, int touch_y) {
     lcd_putString(10, 10, (unsigned char *)coord_str);
 }
 
+void led_ladder_init(void)
+{
+    /* Enable the GPIOF peripheral clock */
+    RCC->APB2ENR |= RCC_APB2ENR_IOPFEN;
+
+    /*
+     * Each PF0-PF7 configuration field is set to 0x2:
+     *
+     * CNF  = 00: general-purpose push-pull
+     * MODE = 10: output at 2 MHz
+     *
+     * GPIOF->CRL controls pins PF0-PF7.
+     */
+    GPIOF->CRL = 0x22222222U;
+
+    /* Start with all eight LEDs off */
+    GPIOF->BRR = 0x00FFU;
+}
+
 void SystemInit() {
 	lcd_init();
     spi_init();
     rtc_init();
-    lock_led_init();
+	led_ladder_init();
+    //lock_led_init();
     motion_init();
     heating_init();
     setupADC();
-	light_led_init();
+	//light_led_init();
 }
