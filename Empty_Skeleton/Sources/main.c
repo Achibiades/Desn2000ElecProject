@@ -25,6 +25,7 @@ void shutdown_all(int *systems_active);
 void check_auto_shutdown(int ev, int touched, int inside_active, unsigned int now,
                          int *shutdown_armed, unsigned int *arm_time,
                          int *systems_active);
+void startup_all(int *systems_active);
 
 int main() {
 
@@ -57,8 +58,6 @@ int main() {
     while (1) {
         unsigned int now = rtc_get_epoch();
 
-        get_real_time(time_str, date_str);
-
         int ev = motion_update(&inside);
 
         int touched = (touch_read_xy(&x_coord, &y_coord) == 1);
@@ -66,6 +65,8 @@ int main() {
         //y_coord = map_pixel(y_coord, 0, 250, 0, 320);
 
         int inside_active = motion_inside_active();
+
+        get_real_time(time_str, date_str);
 
         check_auto_shutdown(ev, touched, inside_active, now,
                             &shutdown_armed, &arm_time, &systems_active);
@@ -255,6 +256,10 @@ void check_auto_shutdown(int ev, int touched, int inside_active, unsigned int no
     // Any inside activity cancels the countdown until the next exit
     if (touched || inside_active) {
         *shutdown_armed = 0;
+        // if systems were already shut down, bring them back once
+        if (*systems_active == 0) {
+            startup_all(systems_active);
+        }
     }
 
     // A fresh exit (re-)arms it -- runs after the cancel so exit always wins
@@ -267,4 +272,11 @@ void check_auto_shutdown(int ev, int touched, int inside_active, unsigned int no
         shutdown_all(systems_active);
         *shutdown_armed = 0;
     }
+}
+
+void startup_all(int *systems_active) {
+    unlock_all();
+    heating_on();
+    lights_on();
+    *systems_active = 1;
 }
