@@ -253,7 +253,9 @@ void handle_light_touch(int tx, int ty)
             bedroom2_light
         );
 
-        update_light_led();
+        //DEBUG REMOVE LATER: checking LED 2 FUNC. shoudl turn LED2 on when press bedroom2
+        GPIOF->BSRR = (1U << LIGHT_LED_PIN);
+        //update_light_led();
         return;
     }
 
