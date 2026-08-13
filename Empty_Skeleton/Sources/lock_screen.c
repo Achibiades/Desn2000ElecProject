@@ -330,3 +330,21 @@ void handle_lock_touch(int tx, int ty)
         return;
     }
 }
+
+void unlock_all() {
+    main_door_locked = 0;
+    window1_locked = 0;
+    window2_locked = 0;
+    window3_locked = 0;
+    window4_locked = 0;
+    window5_locked = 0;
+}
+
+void lock_all() {
+    main_door_locked = 1;
+    window1_locked = 1;
+    window2_locked = 1;
+    window3_locked = 1;
+    window4_locked = 1;
+    window5_locked = 1;
+}

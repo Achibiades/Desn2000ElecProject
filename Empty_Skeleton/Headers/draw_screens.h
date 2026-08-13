@@ -11,6 +11,8 @@ int check_time(char *time_str, int hour, int minute);
 void lock_led_init(void);
 void draw_lock_screen(void);
 void handle_lock_touch(int tx, int ty);
+void unlock_all();
+void lock_all();
 
 //light logic
 void light_led_init(void);
