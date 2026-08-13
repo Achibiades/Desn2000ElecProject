@@ -48,7 +48,7 @@ int main() {
     int inside = 0;   // 0 = outside, 1 = inside
     int shutdown_armed = 0;
     unsigned int arm_time = 0;
-    int systems_active = 1;
+    int systems_active = 0;
 
     // Climate control state
     temp_state_t temp_prev = TEMP_IDLE;
