@@ -338,6 +338,8 @@ void unlock_all() {
     window3_locked = 0;
     window4_locked = 0;
     window5_locked = 0;
+
+    update_lock_led();
 }
 
 void lock_all() {
@@ -347,4 +349,6 @@ void lock_all() {
     window3_locked = 1;
     window4_locked = 1;
     window5_locked = 1;
+
+    update_lock_led();
 }
