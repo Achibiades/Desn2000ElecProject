@@ -131,11 +131,6 @@ void handle_coffee_touch(int tx, int ty,
             GPIOF->BSRR = GPIO_BSRR_BR1;
     }
 
-    draw_coffee_screen(
-        *hour,
-        *minute,
-        *wakeup_sunrise
-    );
 }
 
 
