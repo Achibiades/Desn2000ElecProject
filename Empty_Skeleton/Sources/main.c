@@ -269,22 +269,20 @@ void shutdown_all(int *systems_active) {
 // (a touch or the inside sensor being active) cancels it outright, so the
 // countdown only completes if nobody is detected inside until it elapses.
 void check_auto_shutdown(int ev, int touched, int inside_active, unsigned int now,
-                         int *shutdown_armed, unsigned int *arm_time,
-                         int *systems_active) {
+    int *shutdown_armed, unsigned int *arm_time,
+    int *systems_active) {
 
-    // Any inside activity cancels the countdown until the next exit
-    if (touched || inside_active) {
-        *shutdown_armed = 0;
-        // if systems were already shut down, bring them back once
-        if (*systems_active == 0) {
-            startup_all(systems_active);
-        }
-    }
-
-    // A fresh exit (re-)arms it -- runs after the cancel so exit always wins
+    // A fresh exit arms the countdown and wins outright this pass
     if (ev == MOTION_EXIT) {
         *shutdown_armed = 1;
         *arm_time = now;
+    }
+    // Otherwise, inside activity cancels a pending countdown
+    else if (touched || inside_active) {
+        *shutdown_armed = 0;
+        if (*systems_active == 0) {
+            startup_all(systems_active);
+        }
     }
 
     if (*shutdown_armed && (now - *arm_time >= SHUTDOWN_TIMEOUT_S)) {
