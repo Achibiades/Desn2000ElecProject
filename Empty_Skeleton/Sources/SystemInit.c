@@ -195,4 +195,5 @@ void SystemInit() {
     motion_init();
     heating_init();
     setupADC();
+	light_led_init();
 }

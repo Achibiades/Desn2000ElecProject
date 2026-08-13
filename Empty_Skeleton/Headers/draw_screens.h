@@ -11,6 +11,13 @@ int check_time(char *time_str, int hour, int minute);
 void lock_led_init(void);
 void draw_lock_screen(void);
 void handle_lock_touch(int tx, int ty);
+void unlock_all();
+void lock_all();
+
+//light logic
+void light_led_init(void);
+void draw_light_screen(void);
+void handle_light_touch(int tx, int ty);
 
 void draw_lock_screen();
 void draw_coffee_screen();
@@ -19,6 +26,7 @@ void draw_temp_screen();
 void draw_light_screen();
 void draw_sound_screen();
 
+//temp logic
 void draw_temp_screen(void);
 void draw_desired_temp(int temp, int x, int y);
 void change_temp(int *desired_temp, int change);
