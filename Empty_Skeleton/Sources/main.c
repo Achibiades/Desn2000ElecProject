@@ -123,7 +123,7 @@ void check_alarm(char *time_str, int alarm_hour, int alarm_minute,
 
 
 // 0=Home, 1=Coffee, 2=Light, 3=Temp, 4=Alarm, 5=Security, 6=Sound
-void render_screen(int curr_ui, int alarm_hour, int alarm_minute, int alarm_enable, int desired_temp, wakeup_sunrise) {
+void render_screen(int curr_ui, int alarm_hour, int alarm_minute, int alarm_enable, int desired_temp, int wakeup_sunrise) {
     if (curr_ui == 0) {
         draw_home_screen();
     } else if (curr_ui == 1) {
