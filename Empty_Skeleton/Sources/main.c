@@ -3,6 +3,7 @@
 #include "../LCD/lcd_hw.h"
 #include "../LCD/lcd_grph.h"
 #include "../Headers/motion.h"
+#include "../Headers/heating.h"
 #include "../Headers/SystemInit.h"
 #include "../Headers/draw_screens.h"
 #include "../Headers/rtc.h"
@@ -29,6 +30,7 @@ void startup_all(int *systems_active);
 
 int main() {
 
+    //UI
     int x_coord = 0;
     int y_coord = 0;
 
@@ -36,20 +38,26 @@ int main() {
     int prev_ui = -1; // -1 so the home screen draws on the first loop
     int was_touched = 0;
 
+    // Alarm
     int alarm_hour = 7;
     int alarm_minute = 30;
     int alarm_enable = 0;
     int wakeup_sunrise = 0;
 
+    // Occupancy
     int inside = 0;   // 0 = outside, 1 = inside
     int shutdown_armed = 0;
     unsigned int arm_time = 0;
     int systems_active = 1;
 
+    // Climate control state
+    temp_state_t temp_prev = TEMP_IDLE;
+    unsigned int temp_since = 0;
+
     char time_str[6];
     char date_str[6];
 
- 
+    // Peripherals are brought up by SystemInit() before main runs
 
     while (1) {
         unsigned int now = rtc_get_epoch();
@@ -66,6 +74,8 @@ int main() {
 
         check_auto_shutdown(ev, touched, inside_active, now,
                             &shutdown_armed, &arm_time, &systems_active);
+
+        check_climate(now, systems_active, &temp_prev, &temp_since);
 
         check_alarm(time_str, alarm_hour, alarm_minute, &alarm_enable, curr_ui);
 

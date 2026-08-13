@@ -192,4 +192,5 @@ void SystemInit() {
     rtc_init();
     lock_led_init();
     motion_init();
+    heating_init();
 }
