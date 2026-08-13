@@ -15,13 +15,15 @@ void handle_alarm_touch(int x_coord, int y_coord, int *curr_ui,
 void lock_led_init(void);
 void draw_lock_screen(void);
 void handle_lock_touch(int tx, int ty);
-void unlock_all();
-void lock_all();
+void unlock_all(int curr_ui);
+void lock_all(int curr_ui);
 
 //light logic
 void light_led_init(void);
 void draw_light_screen(void);
 void handle_light_touch(int tx, int ty);
+void lights_off(int curr_ui);
+void lights_on(int curr_ui);
 
 void draw_lock_screen();
 void draw_coffee_screen();

@@ -228,7 +228,7 @@ void shutdown_all(int *systems_active, int curr_ui) {
     // TODO:
     lock_all(curr_ui);
     heating_off();
-    // lights_off();
+    lights_off(curr_ui);
     *systems_active = 0;
 }
 
@@ -263,6 +263,6 @@ void startup_all(int *systems_active, int curr_ui) {
     // TODO:
     unlock_all(curr_ui);
     heating_on();
-    // lights_on();
+    lights_on(curr_ui);
     *systems_active = 1;
 }

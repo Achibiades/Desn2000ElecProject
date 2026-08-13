@@ -336,3 +336,36 @@ void handle_light_touch(int tx, int ty)
         return;
     }
 }
+
+
+void lights_off(int curr_ui) {
+    bedroom1_light = 0;
+    bedroom2_light = 0;
+    bedroom3_light = 0;
+    bathroom_light = 0;
+    kitchen_light = 0;
+    living_room_light = 0;
+
+    update_light_led();
+    
+    //all tiles could have changed
+		if (curr_ui == 2) {
+			draw_all_light_tiles();
+		}
+}
+
+void lights_on(int curr_ui) {
+    bedroom1_light = 1;
+    bedroom2_light = 1;
+    bedroom3_light = 1;
+    bathroom_light = 1;
+    kitchen_light = 1;
+    living_room_light = 1;
+
+    update_light_led();
+
+    //all tiles could have changed 
+		if (curr_ui == 2) {
+			draw_all_light_tiles();
+		}
+}
