@@ -53,6 +53,7 @@ int main() {
     // Climate control state
     temp_state_t temp_prev = TEMP_IDLE;
     unsigned int temp_since = 0;
+    int desired_temp = 25; // Default to 25
 
     char time_str[6];
     char date_str[6];
@@ -75,7 +76,7 @@ int main() {
         check_auto_shutdown(ev, touched, inside_active, now,
                             &shutdown_armed, &arm_time, &systems_active);
 
-        check_climate(now, systems_active, &temp_prev, &temp_since);
+        check_climate(now, systems_active, &temp_prev, &temp_since, desired_temp);
 
         check_alarm(time_str, alarm_hour, alarm_minute, &alarm_enable, curr_ui);
 

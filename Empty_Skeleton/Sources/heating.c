@@ -71,14 +71,14 @@ void heating_init(void) {
 // RGB1 shows red/blue only once active correction is engaged; during the
 // passive-only window it stays off.
 void check_climate(unsigned int now, int systems_active,
-                   temp_state_t *prev_state, unsigned int *state_since) {
+                   temp_state_t *prev_state, unsigned int *state_since, int desired_temp) {
 
     if (!systems_active) {
         rgb1_off();
         return;
     }
 
-    temp_state_t s = temp_get_state();
+    temp_state_t s = temp_get_state(desired_temp);
 
     // A state change restarts the 5s passive-settle window
     if (s != *prev_state) {
@@ -105,7 +105,7 @@ void check_climate(unsigned int now, int systems_active,
         if (sun_is_out()) {
             close_blinds();
         }
-        
+
         if (now - *state_since >= PASSIVE_SETTLE_S) {   // still hot after 5s
             rgb1_blue();  // active cooling engaged
         } else {
@@ -113,12 +113,3 @@ void check_climate(unsigned int now, int systems_active,
         }
     }
 }
-
-
-// ===========================================================================
-// TEMPORARY input stubs -- OWNED BY THE TEMPERATURE / LIGHT (ADC) MODULES.
-// These exist only so this file links on its own. DELETE them once the real
-// sensor functions exist, or you'll get duplicate-symbol linker errors.
-// ===========================================================================
-temp_state_t temp_get_state(void) { return TEMP_IDLE; }
-int sun_is_out(void) { return 0; }

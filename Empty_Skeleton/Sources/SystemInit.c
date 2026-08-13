@@ -7,6 +7,7 @@
 #include "../Headers/draw_screens.h"
 #include "../Headers/rtc.h"
 #include "../Headers/motion.h"
+#include "../Headers/adc.h"
 // ==========================================
 // FUNCTION PROTOTYPES
 // ==========================================
@@ -193,4 +194,5 @@ void SystemInit() {
     lock_led_init();
     motion_init();
     heating_init();
+    setupADC();
 }
