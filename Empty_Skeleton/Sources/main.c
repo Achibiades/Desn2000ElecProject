@@ -49,11 +49,7 @@ int main() {
     char time_str[6];
     char date_str[6];
 
-    lcd_init();
-    spi_init();
-    rtc_init();
-    lock_led_init();
-    motion_init();
+ 
 
     while (1) {
         unsigned int now = rtc_get_epoch();
