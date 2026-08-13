@@ -313,20 +313,7 @@ void handle_lock_touch(int tx, int ty)
 
     /* Lock everything */
     else if (touch_rect(20, 235, 220, 275, tx, ty)) {
-        main_door_locked = 1;
-        window1_locked = 1;
-        window2_locked = 1;
-        window3_locked = 1;
-        window4_locked = 1;
-        window5_locked = 1;
-
-        /*
-         * All six states changed, so redraw all six tiles.
-         * The rest of the screen is not redrawn.
-         */
-        draw_all_lock_tiles();
-
-        update_lock_led();
+        lock_all();
         return;
     }
 }
@@ -340,6 +327,9 @@ void unlock_all() {
     window5_locked = 0;
 
     update_lock_led();
+    
+    //all tiles could have changed
+    draw_all_lock_tiles();
 }
 
 void lock_all() {
@@ -351,4 +341,7 @@ void lock_all() {
     window5_locked = 1;
 
     update_lock_led();
+
+    //all tiles could have changed
+    draw_all_lock_tiles();
 }
