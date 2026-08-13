@@ -75,6 +75,7 @@ void check_climate(unsigned int now, int systems_active,
 
     if (!systems_active) {
         rgb1_off();
+        close_blinds();
         return;
     }
 
