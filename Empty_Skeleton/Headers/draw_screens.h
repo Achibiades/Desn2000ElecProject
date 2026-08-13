@@ -18,3 +18,8 @@ void draw_home_screen();
 void draw_temp_screen();
 void draw_light_screen();
 void draw_sound_screen();
+
+void draw_temp_screen(void);
+void draw_desired_temp(int temp, int x, int y);
+void change_temp(int *desired_temp, int change);
+void handle_temp_touch(int x_coord, int y_coord, int *curr_ui, int *desired_temp);

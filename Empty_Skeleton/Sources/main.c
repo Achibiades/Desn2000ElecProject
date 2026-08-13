@@ -14,10 +14,10 @@
 // Forward declarations -- definitions live underneath main
 void check_alarm(char *time_str, int alarm_hour, int alarm_minute,
                  int *alarm_enable, int curr_ui);
-void render_screen(int curr_ui, int alarm_hour, int alarm_minute, int alarm_enable);
+void render_screen(int curr_ui, int alarm_hour, int alarm_minute, int alarm_enable, int desired_temp);
 void handle_touch(int x_coord, int y_coord, int *curr_ui,
                   int *alarm_hour, int *alarm_minute,
-                  int *alarm_enable, int *wakeup_sunrise);
+                  int *alarm_enable, int *wakeup_sunrise, int *desired_temp);
 void handle_home_touch(int x_coord, int y_coord, int *curr_ui);
 void handle_alarm_touch(int x_coord, int y_coord, int *curr_ui,
                         int *alarm_hour, int *alarm_minute,
@@ -81,7 +81,7 @@ int main() {
         check_alarm(time_str, alarm_hour, alarm_minute, &alarm_enable, curr_ui);
 
         if (curr_ui != prev_ui) {
-            render_screen(curr_ui, alarm_hour, alarm_minute, alarm_enable);
+            render_screen(curr_ui, alarm_hour, alarm_minute, alarm_enable, desired_temp);
             prev_ui = curr_ui;
         }
 
@@ -91,7 +91,7 @@ int main() {
                 was_touched = 1;
                 handle_touch(x_coord, y_coord, &curr_ui,
                              &alarm_hour, &alarm_minute,
-                             &alarm_enable, &wakeup_sunrise);
+                             &alarm_enable, &wakeup_sunrise, &desired_temp);
             }
         } else {
             was_touched = 0;
@@ -117,7 +117,7 @@ void check_alarm(char *time_str, int alarm_hour, int alarm_minute,
 
 
 // 0=Home, 1=Coffee, 2=Light, 3=Temp, 4=Alarm, 5=Security, 6=Sound
-void render_screen(int curr_ui, int alarm_hour, int alarm_minute, int alarm_enable) {
+void render_screen(int curr_ui, int alarm_hour, int alarm_minute, int alarm_enable, int desired_temp) {
     if (curr_ui == 0) {
         draw_home_screen();
     } else if (curr_ui == 1) {
@@ -126,6 +126,7 @@ void render_screen(int curr_ui, int alarm_hour, int alarm_minute, int alarm_enab
         draw_light_screen();
     } else if (curr_ui == 3) {
         draw_temp_screen();
+        draw_desired_temp(desired_temp, 40, 98);
     } else if (curr_ui == 4) {
         draw_alarm_screen();
         draw_alarm_time(alarm_hour, alarm_minute, 60, 104);
@@ -140,7 +141,7 @@ void render_screen(int curr_ui, int alarm_hour, int alarm_minute, int alarm_enab
 // 0=Home, 1=Coffee, 2=Light, 3=Temp, 4=Alarm, 5=Security, 6=Sound
 void handle_touch(int x_coord, int y_coord, int *curr_ui,
                   int *alarm_hour, int *alarm_minute,
-                  int *alarm_enable, int *wakeup_sunrise) {
+                  int *alarm_enable, int *wakeup_sunrise, int *desired_temp) {
 
     if (*curr_ui == 0) {
         handle_home_touch(x_coord, y_coord, curr_ui);
@@ -163,7 +164,7 @@ void handle_touch(int x_coord, int y_coord, int *curr_ui,
         if (touch_rect(10, 10, 70, 40, x_coord, y_coord)) {
             *curr_ui = 0;
         } else {
-            //*curr_ui = temp_logic();
+            handle_temp_touch(x_coord, y_coord, curr_ui, &desired_temp);
         }
 
     } else if (*curr_ui == 4) {
