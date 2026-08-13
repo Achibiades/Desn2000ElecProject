@@ -164,7 +164,7 @@ void check_coffee(
 
     else
     {
-        if (sunrise_detected)
+        if (wakeup_sunrise)
             GPIOF->BSRR = GPIO_BSRR_BS1;
         else
             GPIOF->BSRR = GPIO_BSRR_BR1;
