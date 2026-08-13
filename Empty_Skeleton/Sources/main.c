@@ -14,7 +14,7 @@
 // Forward declarations -- definitions live underneath main
 void check_alarm(char *time_str, int alarm_hour, int alarm_minute,
                  int *alarm_enable, int curr_ui);
-void render_screen(int curr_ui, int alarm_hour, int alarm_minute, int alarm_enable, int desired_temp);
+void render_screen(int curr_ui, int alarm_hour, int alarm_minute, int alarm_enable, int desired_temp, int wakeup_sunrise);
 void handle_touch(int x_coord, int y_coord, int *curr_ui,
                   int *alarm_hour, int *alarm_minute,
                   int *alarm_enable, int *wakeup_sunrise, int *desired_temp);
@@ -42,7 +42,9 @@ int main() {
     int alarm_hour = 7;
     int alarm_minute = 30;
     int alarm_enable = 0;
-    int wakeup_sunrise = 0;
+
+    // Alarm/Coffee
+    int wakeup_sunrise = 1;
 
     // Occupancy
     int inside = 0;   // 0 = outside, 1 = inside
@@ -58,6 +60,8 @@ int main() {
     char time_str[6];
     char date_str[6];
 
+    // Coffee 
+    coffee_init();
     // Peripherals are brought up by SystemInit() before main runs
 
     while (1) {
@@ -78,8 +82,10 @@ int main() {
 
         check_alarm(time_str, alarm_hour, alarm_minute, &alarm_enable, curr_ui);
 
+        check_coffee(time_str, alarm_hour, alarm_minute, wakeup_sunrise);
+      
         if (curr_ui != prev_ui) {
-            render_screen(curr_ui, alarm_hour, alarm_minute, alarm_enable, desired_temp);
+            render_screen(curr_ui, alarm_hour, alarm_minute, alarm_enable, desired_temp, wakeup_sunrise);
             prev_ui = curr_ui;
         }
 
@@ -117,11 +123,11 @@ void check_alarm(char *time_str, int alarm_hour, int alarm_minute,
 
 
 // 0=Home, 1=Coffee, 2=Light, 3=Temp, 4=Alarm, 5=Security, 6=Sound
-void render_screen(int curr_ui, int alarm_hour, int alarm_minute, int alarm_enable, int desired_temp) {
+void render_screen(int curr_ui, int alarm_hour, int alarm_minute, int alarm_enable, int desired_temp, wakeup_sunrise) {
     if (curr_ui == 0) {
         draw_home_screen();
     } else if (curr_ui == 1) {
-        draw_coffee_screen();
+        draw_coffee_screen(alarm_hour, alarm_minute, wakeup_sunrise);
     } else if (curr_ui == 2) {
         draw_light_screen();
     } else if (curr_ui == 3) {
@@ -150,7 +156,7 @@ void handle_touch(int x_coord, int y_coord, int *curr_ui,
         if (touch_rect(10, 10, 70, 40, x_coord, y_coord)) {
             *curr_ui = 0;
         } else {
-            //handle_coffee_touch(x_coord, y_coord);
+            handle_coffee_touch(x_coord, y_coord, alarm_hour, alarm_minute, wakeup_sunrise);
         }
 
     } else if (*curr_ui == 2) {
@@ -220,15 +226,19 @@ void handle_alarm_touch(int x_coord, int y_coord, int *curr_ui,
         *curr_ui = 0;
     } else if (touch_rect(20, 180, 60, 220, x_coord, y_coord)) {    // Hour +
         change_hour(alarm_hour, 1);
+        *wakeup_sunrise = 0;
         draw_alarm_time(*alarm_hour, *alarm_minute, 60, 104);
     } else if (touch_rect(70, 180, 110, 220, x_coord, y_coord)) {   // Hour -
         change_hour(alarm_hour, 0);
+        *wakeup_sunrise = 0;
         draw_alarm_time(*alarm_hour, *alarm_minute, 60, 104);
     } else if (touch_rect(130, 180, 170, 220, x_coord, y_coord)) {  // Minute +
         change_minute(alarm_minute, 1);
+        *wakeup_sunrise = 0;
         draw_alarm_time(*alarm_hour, *alarm_minute, 60, 104);
     } else if (touch_rect(180, 180, 220, 220, x_coord, y_coord)) {  // Minute -
         change_minute(alarm_minute, 0);
+        *wakeup_sunrise = 0;
         draw_alarm_time(*alarm_hour, *alarm_minute, 60, 104);
     } else if (touch_rect(20, 235, 220, 260, x_coord, y_coord)) {   // Sunrise toggle
         if (*wakeup_sunrise == 0) {
