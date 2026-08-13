@@ -4,7 +4,9 @@
 #include "../LCD/lcd_grph.h"
 #include <stdio.h> // Required for sprintf()
 #include "../Headers/SystemInit.h"
-
+#include "../Headers/draw_screens.h"
+#include "../Headers/rtc.h"
+#include "../Headers/motion.h"
 // ==========================================
 // FUNCTION PROTOTYPES
 // ==========================================
@@ -185,5 +187,9 @@ void display_touch_coordinates(int touch_x, int touch_y) {
 }
 
 void SystemInit() {
-
+	lcd_init();
+    spi_init();
+    rtc_init();
+    lock_led_init();
+    motion_init();
 }
