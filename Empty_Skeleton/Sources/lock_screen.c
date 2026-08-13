@@ -35,7 +35,7 @@ void lock_led_init(void)
      * CNF5  = 00: general-purpose push-pull
      */
     GPIOF->CRL &= ~(GPIO_CRL_CNF5 | GPIO_CRL_MODE5);
-    GPIOF->CRL |= GPIO_CRL_MODE5_1;
+    GPIOF->CRL |=  GPIO_CRL_MODE5_1  | GPIO_CRL_MODE6_1 | GPIO_CRL_MODE5_1 | GPIO_CRL_MODE4_1 | GPIO_CRL_MODE3_1 | GPIO_CRL_MODE2_1 | GPIO_CRL_MODE1_1 | GPIO_CRL_MODE0_1;
 
     /* Start with LED5 off */
     GPIOF->BRR = (1U << LOCK_LED_PIN);
@@ -313,12 +313,12 @@ void handle_lock_touch(int tx, int ty)
 
     /* Lock everything */
     else if (touch_rect(20, 235, 220, 275, tx, ty)) {
-        lock_all();
+        lock_all(5);
         return;
     }
 }
 
-void unlock_all() {
+void unlock_all(int curr_ui) {
     main_door_locked = 0;
     window1_locked = 0;
     window2_locked = 0;
@@ -329,10 +329,12 @@ void unlock_all() {
     update_lock_led();
     
     //all tiles could have changed
-    draw_all_lock_tiles();
+		if (curr_ui == 5) {
+			draw_all_lock_tiles();
+		}
 }
 
-void lock_all() {
+void lock_all(int curr_ui) {
     main_door_locked = 1;
     window1_locked = 1;
     window2_locked = 1;
@@ -342,6 +344,8 @@ void lock_all() {
 
     update_lock_led();
 
-    //all tiles could have changed
-    draw_all_lock_tiles();
+    //all tiles could have changed 
+		if (curr_ui == 5) {
+			draw_all_lock_tiles();
+		}
 }
