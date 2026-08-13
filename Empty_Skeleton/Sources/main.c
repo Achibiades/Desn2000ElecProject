@@ -83,7 +83,7 @@ int main() {
 
         get_real_time(time_str, date_str);
 
-        check_auto_shutdown(ev, touched, inside_active, now,
+        check_auto_shutdown(ev, touched, inside, now,
                             &shutdown_armed, &arm_time, &systems_active);
 
         check_climate(now, systems_active, &temp_prev, &temp_since, desired_temp);
@@ -268,7 +268,7 @@ void shutdown_all(int *systems_active) {
 // Arms a 5-min countdown when an exit is registered. Any inside activity
 // (a touch or the inside sensor being active) cancels it outright, so the
 // countdown only completes if nobody is detected inside until it elapses.
-void check_auto_shutdown(int ev, int touched, int inside_active, unsigned int now,
+void check_auto_shutdown(int ev, int touched, int inside, unsigned int now,
     int *shutdown_armed, unsigned int *arm_time,
     int *systems_active) {
 
@@ -278,7 +278,7 @@ void check_auto_shutdown(int ev, int touched, int inside_active, unsigned int no
         *arm_time = now;
     }
     // Otherwise, inside activity cancels a pending countdown
-    else if (touched || inside_active) {
+    else if (touched || inside) {
         *shutdown_armed = 0;
         if (*systems_active == 0) {
             startup_all(systems_active);
