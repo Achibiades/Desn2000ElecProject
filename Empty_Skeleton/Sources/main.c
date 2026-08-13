@@ -99,6 +99,8 @@ int main() {
             // Only process the touch once per press
             if (was_touched == 0) {
                 was_touched = 1;
+                inside = 1;
+                motion_mark_inside();
                 handle_touch(x_coord, y_coord, &curr_ui,
                              &alarm_hour, &alarm_minute,
                              &alarm_enable, &wakeup_sunrise, &desired_temp);

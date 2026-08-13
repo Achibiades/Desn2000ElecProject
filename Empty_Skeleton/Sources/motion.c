@@ -44,7 +44,7 @@ void motion_init(void) {
     GPIOA->CRH &= ~(0x00000FFF);   // clear PA8, PA9, PA10 nibbles
     GPIOA->CRH |=  0x00000222;     // PA8/9/10: output push-pull 2 MHz
 
-    rgb_off();
+    rgb_set_red();
     setup_timer();
 }
 
@@ -91,6 +91,6 @@ int motion_update(int *inside) {
     return MOTION_NONE;
 }
 
-int motion_inside_active(void) {
-    return (GPIOC->IDR & INSIDE) ? 1 : 0;
+void motion_mark_inside(void) {
+    rgb_set_green();
 }

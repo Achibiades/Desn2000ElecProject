@@ -5,6 +5,6 @@ enum { MOTION_NONE, MOTION_ENTER, MOTION_EXIT };
 
 void motion_init(void);
 int motion_update(int *inside);
-int motion_inside_active(void);
+void motion_mark_inside(void);
 
 #endif
