@@ -33,9 +33,9 @@ int main() {
     //UI
     int x_coord = 0;
     int y_coord = 0;
+	
+		int time_counter = 9999; // allows 1 cycle between homescreen loading and timer appearing
 
-    int time_counter = 9999; // allows 1 cycle between homescreen loading and timer appearing
-  
     int curr_ui = 0;
     int prev_ui = -1; // -1 so the home screen draws on the first loop
     int was_touched = 0;
