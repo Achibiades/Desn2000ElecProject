@@ -29,7 +29,7 @@ void check_auto_shutdown(int ev, int touched, int inside_active, unsigned int no
 void startup_all(int *systems_active);
 
 int main() {
-    char debug_str[32];
+    //char debug_str[32];
     //UI
     int x_coord = 0;
     int y_coord = 0;
@@ -68,18 +68,6 @@ int main() {
         int touched = (touch_read_xy(&x_coord, &y_coord) == 1);
         //x_coord = map_pixel(x_coord, 10, 234, 0, 240);
         //y_coord = map_pixel(y_coord, 0, 250, 0, 320);
-
-        int inside_active = motion_inside_active();
-
-        // Clear a small box at (x=80, y=10) to prevent text overlapping
-        lcd_fillRect(80, 10, 230, 25, BLACK);
-
-        // Format and print the values
-        snprintf(debug_str, sizeof(debug_str), "InAct:%d Arm:%d In:%d",
-                inside_active, shutdown_armed, inside);
-
-        lcd_fontColor(WHITE, BLACK);
-        lcd_putString(80, 10, (unsigned char *)debug_str);
 
         get_real_time(time_str, date_str);
 
