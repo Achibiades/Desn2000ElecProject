@@ -1,7 +1,10 @@
 #ifndef MOTION_H
 #define MOTION_H
 
+enum { MOTION_NONE, MOTION_ENTER, MOTION_EXIT };
+
 void motion_init(void);
-void motion_update(int *inside);
+int motion_update(int *inside);
+int motion_inside_active(void);
 
 #endif

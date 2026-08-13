@@ -169,3 +169,9 @@ void get_real_time(char *time_str, char *date_str)
     real_time = ((unsigned int)RTC->CNTH << 16) | (unsigned int)(RTC->CNTL & 0xFFFF);
     epoch_to_strings(real_time, time_str, date_str);
 }
+
+unsigned int rtc_get_epoch(void) {
+    RTC->CRL &= ~RTC_CRL_RSF;
+    while (!(RTC->CRL & RTC_CRL_RSF)) {}
+    return ((unsigned int)RTC->CNTH << 16) | (RTC->CNTL & 0xFFFF);
+}

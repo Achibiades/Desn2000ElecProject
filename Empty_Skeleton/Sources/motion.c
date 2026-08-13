@@ -27,7 +27,7 @@ void motion_init(void) {
     setup_timer();
 }
 
-void motion_update(int *inside) {
+int motion_update(int *inside) {
     static int state = IDLE;
     static int out_prev = 0, in_prev = 0;
 
@@ -52,6 +52,7 @@ void motion_update(int *inside) {
             GPIOF->BSRR = LED_ENTER | (LED_EXIT << 16);
             *inside = 1;
             state = IDLE;
+            return MOTION_ENTER;
         }
         break;
 
@@ -61,7 +62,16 @@ void motion_update(int *inside) {
             GPIOF->BSRR = LED_EXIT | (LED_ENTER << 16);
             *inside = 0;
             state = IDLE;
+            return MOTION_EXIT;
         }
         break;
     }
+
+    return MOTION_NONE;
+}
+
+// Raw inside sensor state -- 1 while the inside line is active,
+// independent of the enter/exit gesture FSM.
+int motion_inside_active(void) {
+    return (GPIOC->IDR & INSIDE) ? 1 : 0;
 }

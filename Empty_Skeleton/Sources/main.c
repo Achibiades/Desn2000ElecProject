@@ -8,6 +8,8 @@
 #include "../Headers/rtc.h"
 #include <stdio.h>
 
+#define SHUTDOWN_TIMEOUT_S 300
+
 // Forward declarations -- definitions live underneath main
 void check_alarm(char *time_str, int alarm_hour, int alarm_minute,
                  int *alarm_enable, int curr_ui);
@@ -19,6 +21,10 @@ void handle_home_touch(int x_coord, int y_coord, int *curr_ui);
 void handle_alarm_touch(int x_coord, int y_coord, int *curr_ui,
                         int *alarm_hour, int *alarm_minute,
                         int *alarm_enable, int *wakeup_sunrise);
+void shutdown_all(int *systems_active);
+void check_auto_shutdown(int ev, int touched, int inside_active, unsigned int now,
+                         int *shutdown_armed, unsigned int *arm_time,
+                         int *systems_active);
 
 int main() {
 
@@ -35,6 +41,9 @@ int main() {
     int wakeup_sunrise = 0;
 
     int inside = 0;   // 0 = outside, 1 = inside
+    int shutdown_armed = 0;
+    unsigned int arm_time = 0;
+    int systems_active = 1;
 
     char time_str[6];
     char date_str[6];
@@ -46,9 +55,21 @@ int main() {
     motion_init();
 
     while (1) {
+        unsigned int now = rtc_get_epoch();
 
         get_real_time(time_str, date_str);
-        motion_update(&inside);
+
+        int ev = motion_update(&inside);
+
+        int touched = (touch_read_xy(&x_coord, &y_coord) == 1);
+        //x_coord = map_pixel(x_coord, 10, 234, 0, 240);
+        //y_coord = map_pixel(y_coord, 0, 250, 0, 320);
+
+        int inside_active = motion_inside_active();
+
+        check_auto_shutdown(ev, touched, inside_active, now,
+                            &shutdown_armed, &arm_time, &systems_active);
+
         check_alarm(time_str, alarm_hour, alarm_minute, &alarm_enable, curr_ui);
 
         if (curr_ui != prev_ui) {
@@ -56,10 +77,7 @@ int main() {
             prev_ui = curr_ui;
         }
 
-        if (touch_read_xy(&x_coord, &y_coord) == 1) {
-            //x_coord = map_pixel(x_coord, 10, 234, 0, 240);
-            //y_coord = map_pixel(y_coord, 0, 250, 0, 320);
-
+        if (touched) {
             // Only process the touch once per press
             if (was_touched == 0) {
                 was_touched = 1;
@@ -111,7 +129,7 @@ void render_screen(int curr_ui, int alarm_hour, int alarm_minute, int alarm_enab
     }
 }
 
-
+// 0=Home, 1=Coffee, 2=Light, 3=Temp, 4=Alarm, 5=Security, 6=Sound
 void handle_touch(int x_coord, int y_coord, int *curr_ui,
                   int *alarm_hour, int *alarm_minute,
                   int *alarm_enable, int *wakeup_sunrise) {
@@ -188,41 +206,65 @@ void handle_home_touch(int x_coord, int y_coord, int *curr_ui) {
 void handle_alarm_touch(int x_coord, int y_coord, int *curr_ui,
                         int *alarm_hour, int *alarm_minute,
                         int *alarm_enable, int *wakeup_sunrise) {
-    // Return button
-    if (touch_rect(10, 10, 70, 40, x_coord, y_coord)) {
+
+    if (touch_rect(10, 10, 70, 40, x_coord, y_coord)) {             // Return
         *curr_ui = 0;
-    }
-    // Hour +
-    else if (touch_rect(20, 180, 60, 220, x_coord, y_coord)) {
+    } else if (touch_rect(20, 180, 60, 220, x_coord, y_coord)) {    // Hour +
         change_hour(alarm_hour, 1);
         draw_alarm_time(*alarm_hour, *alarm_minute, 60, 104);
-    }
-    // Hour -
-    else if (touch_rect(70, 180, 110, 220, x_coord, y_coord)) {
+    } else if (touch_rect(70, 180, 110, 220, x_coord, y_coord)) {   // Hour -
         change_hour(alarm_hour, 0);
         draw_alarm_time(*alarm_hour, *alarm_minute, 60, 104);
-    }
-    // Minute +
-    else if (touch_rect(130, 180, 170, 220, x_coord, y_coord)) {
+    } else if (touch_rect(130, 180, 170, 220, x_coord, y_coord)) {  // Minute +
         change_minute(alarm_minute, 1);
         draw_alarm_time(*alarm_hour, *alarm_minute, 60, 104);
-    }
-    // Minute -
-    else if (touch_rect(180, 180, 220, 220, x_coord, y_coord)) {
+    } else if (touch_rect(180, 180, 220, 220, x_coord, y_coord)) {  // Minute -
         change_minute(alarm_minute, 0);
         draw_alarm_time(*alarm_hour, *alarm_minute, 60, 104);
-    }
-    // Wake up to sunrise toggle
-    else if (touch_rect(20, 235, 220, 260, x_coord, y_coord)) {
+    } else if (touch_rect(20, 235, 220, 260, x_coord, y_coord)) {   // Sunrise toggle
         if (*wakeup_sunrise == 0) {
             *wakeup_sunrise = 1;
         } else {
             *wakeup_sunrise = 0;
         }
-    }
-    // Alarm ON
-    else if (touch_rect(20, 275, 110, 305, x_coord, y_coord)) {
+    } else if (touch_rect(20, 275, 110, 305, x_coord, y_coord)) {   // Alarm ON
         *alarm_enable = 1;
         draw_alarm_state(*alarm_enable);
+    } else if (touch_rect(130, 275, 220, 305, x_coord, y_coord)) {  // Alarm OFF
+        *alarm_enable = 0;
+        draw_alarm_state(*alarm_enable);
+    }
+}
+
+
+void shutdown_all(int *systems_active) {
+    lock_all();
+    heating_off();
+    lights_off();
+    *systems_active = 0;
+}
+
+
+// Arms a 5-min countdown when an exit is registered. Any inside activity
+// (a touch or the inside sensor being active) cancels it outright, so the
+// countdown only completes if nobody is detected inside until it elapses.
+void check_auto_shutdown(int ev, int touched, int inside_active, unsigned int now,
+                         int *shutdown_armed, unsigned int *arm_time,
+                         int *systems_active) {
+
+    // Any inside activity cancels the countdown until the next exit
+    if (touched || inside_active) {
+        *shutdown_armed = 0;
+    }
+
+    // A fresh exit (re-)arms it -- runs after the cancel so exit always wins
+    if (ev == MOTION_EXIT) {
+        *shutdown_armed = 1;
+        *arm_time = now;
+    }
+
+    if (*shutdown_armed && (now - *arm_time >= SHUTDOWN_TIMEOUT_S)) {
+        shutdown_all(systems_active);
+        *shutdown_armed = 0;
     }
 }
