@@ -218,42 +218,6 @@ void handle_home_touch(int x_coord, int y_coord, int *curr_ui) {
 }
 
 
-void handle_alarm_touch(int x_coord, int y_coord, int *curr_ui,
-                        int *alarm_hour, int *alarm_minute,
-                        int *alarm_enable, int *wakeup_sunrise) {
-
-    if (touch_rect(10, 10, 70, 40, x_coord, y_coord)) {             // Return
-        *curr_ui = 0;
-    } else if (touch_rect(20, 180, 60, 220, x_coord, y_coord)) {    // Hour +
-        change_hour(alarm_hour, 1);
-        *wakeup_sunrise = 0;
-        draw_alarm_time(*alarm_hour, *alarm_minute, 60, 104);
-    } else if (touch_rect(70, 180, 110, 220, x_coord, y_coord)) {   // Hour -
-        change_hour(alarm_hour, 0);
-        *wakeup_sunrise = 0;
-        draw_alarm_time(*alarm_hour, *alarm_minute, 60, 104);
-    } else if (touch_rect(130, 180, 170, 220, x_coord, y_coord)) {  // Minute +
-        change_minute(alarm_minute, 1);
-        *wakeup_sunrise = 0;
-        draw_alarm_time(*alarm_hour, *alarm_minute, 60, 104);
-    } else if (touch_rect(180, 180, 220, 220, x_coord, y_coord)) {  // Minute -
-        change_minute(alarm_minute, 0);
-        *wakeup_sunrise = 0;
-        draw_alarm_time(*alarm_hour, *alarm_minute, 60, 104);
-    } else if (touch_rect(20, 235, 220, 260, x_coord, y_coord)) {   // Sunrise toggle
-        if (*wakeup_sunrise == 0) {
-            *wakeup_sunrise = 1;
-        } else {
-            *wakeup_sunrise = 0;
-        }
-    } else if (touch_rect(20, 275, 110, 305, x_coord, y_coord)) {   // Alarm ON
-        *alarm_enable = 1;
-        draw_alarm_state(*alarm_enable);
-    } else if (touch_rect(130, 275, 220, 305, x_coord, y_coord)) {  // Alarm OFF
-        *alarm_enable = 0;
-        draw_alarm_state(*alarm_enable);
-    }
-}
 
 
 void shutdown_all(int *systems_active) {
