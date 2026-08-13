@@ -1,10 +1,13 @@
 #include "../Headers/stm32f103xe.h"
 #include "../Headers/motion.h"
 
-#define OUTSIDE   (1 << 7)   // SW1, Port C
-#define INSIDE    (1 << 6)   // SW0, Port C
-#define LED_ENTER (1 << 7)   // PF7
-#define LED_EXIT  (1 << 6)   // PF6
+#define OUTSIDE   (1 << 7)   // SW1, Port C (PC7)
+#define INSIDE    (1 << 6)   // SW0, Port C (PC6)
+
+// RGB0 on GPIOA[8:10]
+#define RGB_BLUE   (1 << 8)   // PA8
+#define RGB_RED    (1 << 9)   // PA9
+#define RGB_GREEN  (1 << 10)  // PA10
 
 enum { IDLE, WAIT_INSIDE, WAIT_OUTSIDE };
 #define TIMEOUT_MS 5000
@@ -16,14 +19,32 @@ static void setup_timer(void) {
     TIM2->CR1 |= 0x1;
 }
 
+// Drive the RGB LED: green for entered, red for exited.
+// BSRR sets pins in the low half, clears them in the high half (<< 16),
+// so one write turns the wanted colour on and the others off atomically.
+static void rgb_set_green(void) {
+    GPIOA->BSRR = RGB_GREEN | ((RGB_RED | RGB_BLUE) << 16);
+}
+static void rgb_set_red(void) {
+    GPIOA->BSRR = RGB_RED | ((RGB_GREEN | RGB_BLUE) << 16);
+}
+static void rgb_off(void) {
+    GPIOA->BSRR = (RGB_RED | RGB_GREEN | RGB_BLUE) << 16;
+}
+
 void motion_init(void) {
     RCC->APB2ENR |= RCC_APB2ENR_IOPCEN;
-    RCC->APB2ENR |= RCC_APB2ENR_IOPFEN;
-    GPIOC->CRL &= 0x00FFFFFF;
+    RCC->APB2ENR |= RCC_APB2ENR_IOPAEN;   // Port A for the RGB LED
+
+    GPIOC->CRL &= 0x00FFFFFF;   // PC6, PC7 as inputs (switches)
     GPIOC->CRL |= 0x44000000;
-    GPIOF->CRL &= 0x00FFFFFF;
-    GPIOF->CRL |= 0x22000000;
-    GPIOF->BSRR = (LED_ENTER | LED_EXIT) << 16;
+
+    // PA8, PA9, PA10 are in CRH (pins 8-15). Configure just those three
+    // nibbles as output push-pull 2 MHz (0010), leaving the rest of CRH alone.
+    GPIOA->CRH &= ~(0x00000FFF);   // clear PA8, PA9, PA10 nibbles
+    GPIOA->CRH |=  0x00000222;     // PA8/9/10: output push-pull 2 MHz
+
+    rgb_off();
     setup_timer();
 }
 
@@ -49,7 +70,7 @@ int motion_update(int *inside) {
     case WAIT_INSIDE:   // outside first -> inside -> ENTER
         if (TIM2->CNT > TIMEOUT_MS) state = IDLE;
         else if (in_edge) {
-            GPIOF->BSRR = LED_ENTER | (LED_EXIT << 16);
+            rgb_set_green();        // entered -> green
             *inside = 1;
             state = IDLE;
             return MOTION_ENTER;
@@ -59,7 +80,7 @@ int motion_update(int *inside) {
     case WAIT_OUTSIDE:  // inside first -> outside -> EXIT
         if (TIM2->CNT > TIMEOUT_MS) state = IDLE;
         else if (out_edge) {
-            GPIOF->BSRR = LED_EXIT | (LED_ENTER << 16);
+            rgb_set_red();          // exited -> red
             *inside = 0;
             state = IDLE;
             return MOTION_EXIT;
@@ -70,8 +91,6 @@ int motion_update(int *inside) {
     return MOTION_NONE;
 }
 
-// Raw inside sensor state -- 1 while the inside line is active,
-// independent of the enter/exit gesture FSM.
 int motion_inside_active(void) {
     return (GPIOC->IDR & INSIDE) ? 1 : 0;
 }
