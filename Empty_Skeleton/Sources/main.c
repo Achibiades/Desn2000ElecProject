@@ -34,6 +34,8 @@ int main() {
     int x_coord = 0;
     int y_coord = 0;
 
+    int time_counter = 9999; // allows 1 cycle between homescreen loading and timer appearing
+  
     int curr_ui = 0;
     int prev_ui = -1; // -1 so the home screen draws on the first loop
     int was_touched = 0;
@@ -82,9 +84,12 @@ int main() {
 
         check_alarm(time_str, alarm_hour, alarm_minute, &alarm_enable, curr_ui);
 
-        if (curr_ui == 0) {
+        if (curr_ui == 0 && time_counter >= 10000) {
             draw_current_time(time_str, date_str);
-        }
+						time_counter = 0;
+        } else {
+						time_counter = time_counter + 1;
+				}
 
         check_coffee(time_str, alarm_hour, alarm_minute, wakeup_sunrise);
       
