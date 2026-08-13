@@ -82,6 +82,10 @@ int main() {
 
         check_alarm(time_str, alarm_hour, alarm_minute, &alarm_enable, curr_ui);
 
+        if (curr_ui == 0) {
+            draw_current_time(time_str, date_str);
+        }
+
         check_coffee(time_str, alarm_hour, alarm_minute, wakeup_sunrise);
       
         if (curr_ui != prev_ui) {
