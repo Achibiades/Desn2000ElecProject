@@ -58,46 +58,42 @@ void draw_alarm_screen() {
 
 void change_minute(int *alarm_minute, int change)
 {
-    if (change == 1)
-    {
+    if (change == 1) {
+        // +5 logic
         *alarm_minute += 5;
-        if (*alarm_minute > 55)
-        {
+
+        if (*alarm_minute > 55) {
             *alarm_minute = 55;
+            // prevent go to 60
         }
-    }
-    else
-    {
+
+    } else {
+        // -5 logic
         *alarm_minute -= 5;
-        if (*alarm_minute < 0)
-        {
+
+        if (*alarm_minute < 0) {
             *alarm_minute = 0;
+            // prevent go below 0
         }
     }
 }
 
-void change_hour(int *alarm_hour, int change)
-{
-    if (change == 1)
-    {
+void change_hour(int *alarm_hour, int change) {
+    if (change == 1) {
         *alarm_hour += 1;
-        if (*alarm_hour > 23)
-        {
+
+        if (*alarm_hour > 23) {
             *alarm_hour = 23;
         }
-    }
-    else
-    {
+    } else {
         *alarm_hour -= 1;
-        if (*alarm_hour < 0)
-        {
+        if (*alarm_hour < 0) {
             *alarm_hour = 0;
         }
     }
 }
 
-void draw_alarm_time(int hour, int minute, int x, int y)
-{
+void draw_alarm_time(int hour, int minute, int x, int y) {
     char alarm_time[6];
     snprintf(alarm_time, 6, "%02d:%02d", hour, minute);
 
@@ -106,30 +102,28 @@ void draw_alarm_time(int hour, int minute, int x, int y)
 }
 
 // Redraws the ON/OFF value next to the "Alarm State:" label.
-// Clears the old value first so a shorter word (e.g. "ON" after "OFF")
-// doesn't leave stray characters behind.
-void draw_alarm_state(int alarm_enable)
-{
+void draw_alarm_state(int alarm_enable) {
     lcd_fillRect(205, 15, 235, 30, WHITE);
+
     lcd_fontColor(BLACK, WHITE);
 
-    if (alarm_enable)
-    {
+    if (alarm_enable) {
         lcd_putString(205, 21, (unsigned char *)"ON");
-    }
-    else
-    {
+
+    } else {
         lcd_putString(205, 21, (unsigned char *)"OFF");
+
     }
 }
 
 // Compares the current time to the set alarm time
-int check_time(char *time_str, int hour, int minute)
-{
+int check_time(char *time_str, int hour, int minute) {
     char alarm_time[6];
-    snprintf(alarm_time, 6, "%02d:%02d", hour, minute);
 
-    return !strcmp(time_str, alarm_time);
+    snprintf(alarm_time, 6, "%02d:%02d", hour, minute);
+    // get time into string format so we can compare it. 
+
+    return !strcmp(time_str, alarm_time); // compare the string and send it back
 }
 
 // handles alarm touch logic 
