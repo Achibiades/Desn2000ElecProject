@@ -14,7 +14,7 @@
 #define SHUTDOWN_TIMEOUT_S 10
 
 void check_alarm(char *time_str, int alarm_hour, int alarm_minute,
-                 int *alarm_enable, int curr_ui);
+                 int *alarm_enable, int curr_ui, int wakeup_sunrise);
 void render_screen(int curr_ui, int alarm_hour, int alarm_minute, int alarm_enable, int desired_temp, int wakeup_sunrise);
 void handle_touch(int x_coord, int y_coord, int *curr_ui,
                   int *alarm_hour, int *alarm_minute,
@@ -81,7 +81,7 @@ int main() {
 
         check_climate(now, systems_active, &temp_prev, &temp_since, desired_temp);
 
-        check_alarm(time_str, alarm_hour, alarm_minute, &alarm_enable, curr_ui);
+        check_alarm(time_str, alarm_hour, alarm_minute, &alarm_enable, curr_ui, wakeup_sunrise);
 				ring_doorbell();
 
         if (curr_ui == 0 && time_counter >= 10000) {
@@ -92,6 +92,8 @@ int main() {
 				} else {
 						time_counter = time_counter + 1;
 				}
+				
+
 
         check_coffee(time_str, alarm_hour, alarm_minute, wakeup_sunrise, now);
 
@@ -120,11 +122,15 @@ int main() {
 
 
 void check_alarm(char *time_str, int alarm_hour, int alarm_minute,
-                 int *alarm_enable, int curr_ui) {
+                 int *alarm_enable, int curr_ui, int wakeup_sunrise) {
     if (*alarm_enable) {
         if (check_time(time_str, alarm_hour, alarm_minute)) {
-            play_song();
-            *alarm_enable = 0;
+						if (wakeup_sunrise) {
+							dawn_wakeup_alarm();
+						} else {
+							standard_wakeup_alarm();
+            }
+						*alarm_enable = 0;
             if (curr_ui == 4) {
                 draw_alarm_state(*alarm_enable);
             }
