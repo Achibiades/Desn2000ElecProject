@@ -18,7 +18,7 @@ void draw_alarm_screen() {
     lcd_putString(110, 21, (unsigned char *)"Alarm State: ");
  
     // Title
-    lcd_putString_scaled(24, 55, (unsigned char *)"WAKE UP TIME", 2);
+    lcd_putString_scaled(60, 55, (unsigned char *)"WAKE UP TIME", 2);
  
     // Time readout 
     lcd_fillRect(30, 90, 210, 150, LIGHT_GRAY);
@@ -45,14 +45,14 @@ void draw_alarm_screen() {
  
     // Wake up to sunrise 
     lcd_fillRect(20, 235, 220, 260, LIGHT_GRAY);
-    lcd_putString(44, 243, (unsigned char *)"WAKE UP TO SUNRISE");
+    lcd_putString(60, 243, (unsigned char *)"WAKE UP TO SUNRISE");
  
     // Alarm ON / OFF buttons
     lcd_fillRect(20, 275, 110, 305, LIGHT_GRAY);
-    lcd_putString(33, 285, (unsigned char *)"Alarm ON");
+    lcd_putString(40, 285, (unsigned char *)"Alarm ON");
  
     lcd_fillRect(130, 275, 220, 305, LIGHT_GRAY);
-    lcd_putString(139, 285, (unsigned char *)"Alarm OFF");
+    lcd_putString(146, 285, (unsigned char *)"Alarm OFF");
 }
 
 

@@ -126,7 +126,7 @@ void check_alarm(char *time_str, int alarm_hour, int alarm_minute,
                  int *alarm_enable, int curr_ui) {
     if (*alarm_enable) {
         if (check_time(time_str, alarm_hour, alarm_minute)) {
-            // play_alarm_sound();
+            play_song();
             *alarm_enable = 0;
             if (curr_ui == 4) {
                 draw_alarm_state(*alarm_enable);
