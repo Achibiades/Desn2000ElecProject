@@ -78,13 +78,21 @@ coffee_sunrise - stores one sunrise time for each day of the year. Each value is
 Once turned ON, the coffee machine remains running for 'COFFEE_RUN_TIME', which is set to 1800 seconds or 30 minutes. The current RTC epoch is compared with 'coffee_start_time' on each loop. Once 1800 seconds pass, the coffee machine automatically turns off, and LED1 turns off.
 
 ## Coffee screen behaviour 
+
 Hour +/- changes the shared wake-up hour.
+
 Minute +/- changes the shared wake-up minute in 5-minute increments.
+
 WAKE UP TO SUNRISE toggles the shared wakeup_sunrise setting used by both the alarm and coffee systems.
+
 Coffee ON enables the coffee system.
+
 Similarly, coffee OFF disables the coffee system.
+
 At the selected manual wake-up time, LED1 turns on to indicate that the coffee machine is running.
+
 The coffee machine automatically turns off 30 minutes after it starts.
+
 The return button takes the user back to the home screen.
 
 ## Occupancy (`motion.c`)
@@ -130,11 +138,17 @@ The `systems_active` gate stops `check_climate` re-enabling heating after a shut
 it works with the explicit `heating_off()` in `shutdown_all()`.
 
 ## Music and Songs (`songs.c`)
+
 udelay - delays for a given period in microseconds.
+
 play_tone - plays a given tone on the DAC.
+
 play_song - chooses 1 of 3 songs to play on the DAC.
+
 ring_doorbell - if the doorbell (Button PB1) is pressed, plays song 1, the doorbell.
+
 standard_wakeup_alarm - plays song 2, a short transcription of "The Third Sanctuary", by Toby Fox, transcribed using code provided by Sudarshan Manikandan.
+
 dawn_wakeup_alarm - plays song 3, a shortened transcription of "Nyanyanyanyanyanyanya!", by daniwell, transcribed by Christopher Hines.
 
 ## MAIN Loop order (`main.c`)
@@ -144,12 +158,19 @@ dawn_wakeup_alarm - plays song 3, a shortened transcription of "Nyanyanyanyanyan
 ## Peripherals Used:
 
 LED1: coffee
+
 LED2: all lights enabled
-LED4: alarm
+
 LED5: all locks enabled
+
 LED6: blinds
+
 RGB0: occupied/unoccupied (green vs red)
+
 RBG1: heating/cool/target temp (red vs blue vs green)
+
 sw1/sw0: motion
+
 potentiometer: temp
+
 PB1: doorbell
