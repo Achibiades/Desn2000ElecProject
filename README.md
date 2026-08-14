@@ -28,7 +28,7 @@ get_real_time - reads the live RTC counter and formats it into those two strings
 
 draw_current_time - redraws the clock box on the home screen with the updated time and date.
 
-
+day_of_year_from_str - gives the current day of the year (out of 365) based on the date string
 
 # Alarm functions (`alarm_screen.c`):
 draw_alarm_screen - draws the static parts of the alarm screen like the buttons, labels and boxes.
