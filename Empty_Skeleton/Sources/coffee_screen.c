@@ -11,33 +11,21 @@ static int coffee_running = 0;
 static unsigned int coffee_start_time = 0;
 
 
-static void draw_coffee_time(int hour, int minute, int wakeup_sunrise)
+static void draw_coffee_time(int hour, int minute)
 {
-    char time_str[10];
+    char time_str[6];
 
     lcd_fillRect(30, 90, 210, 150, LIGHT_GRAY);
     lcd_fontColor(BLACK, LIGHT_GRAY);
 
-    if (wakeup_sunrise)
-    {
-        lcd_putString_scaled(
-            55,
-            108,
-            (unsigned char *)"SUNRISE",
-            2
-        );
-    }
-    else
-    {
-        snprintf(time_str, 10, "%02d:%02d", hour, minute);
+    snprintf(time_str, 6, "%02d:%02d", hour, minute);
 
-        lcd_putString_scaled(
-            60,
-            104,
-            (unsigned char *)time_str,
-            4
-        );
-    }
+    lcd_putString_scaled(
+        60,
+        104,
+        (unsigned char *)time_str,
+        4
+    );
 }
 
 
@@ -96,11 +84,7 @@ void draw_coffee_screen(int hour, int minute, int wakeup_sunrise)
         2
     );
 
-    draw_coffee_time(
-        hour,
-        minute,
-        wakeup_sunrise
-    );
+    draw_coffee_time(hour, minute);
 
     lcd_fontColor(BLACK, WHITE);
     lcd_putString(49, 161, (unsigned char *)"HOUR");
@@ -152,40 +136,40 @@ void handle_coffee_touch(int tx, int ty,
 
         draw_coffee_time(
             *hour,
-            *minute,
-            *wakeup_sunrise
+            *minute
         );
     }
+
     else if (touch_rect(70, 180, 110, 220, tx, ty))
     {
         change_hour(hour, 0);
 
         draw_coffee_time(
             *hour,
-            *minute,
-            *wakeup_sunrise
+            *minute
         );
     }
+
     else if (touch_rect(130, 180, 170, 220, tx, ty))
     {
         change_minute(minute, 1);
 
         draw_coffee_time(
             *hour,
-            *minute,
-            *wakeup_sunrise
+            *minute
         );
     }
+
     else if (touch_rect(180, 180, 220, 220, tx, ty))
     {
         change_minute(minute, 0);
 
         draw_coffee_time(
             *hour,
-            *minute,
-            *wakeup_sunrise
+            *minute
         );
     }
+
     else if (touch_rect(20, 235, 220, 260, tx, ty))
     {
         if (*wakeup_sunrise == 0)
@@ -196,19 +180,15 @@ void handle_coffee_touch(int tx, int ty,
         {
             *wakeup_sunrise = 0;
         }
-
-        draw_coffee_time(
-            *hour,
-            *minute,
-            *wakeup_sunrise
-        );
     }
+
     else if (touch_rect(20, 275, 110, 305, tx, ty))
     {
         coffee_enable = 1;
 
         draw_coffee_state();
     }
+
     else if (touch_rect(130, 275, 220, 305, tx, ty))
     {
         coffee_enable = 0;
@@ -249,19 +229,12 @@ void check_coffee(char *time_str,
         return;
     }
 
-    if (wakeup_sunrise == 0)
+    if (check_time(time_str, hour, minute))
     {
-        if (check_time(time_str, hour, minute))
-        {
-            coffee_running = 1;
-            coffee_start_time = now;
+        coffee_running = 1;
+        coffee_start_time = now;
 
-            GPIOF->BSRR = GPIO_BSRR_BS1;
-        }
-        else
-        {
-            GPIOF->BSRR = GPIO_BSRR_BR1;
-        }
+        GPIOF->BSRR = GPIO_BSRR_BS1;
     }
     else
     {
