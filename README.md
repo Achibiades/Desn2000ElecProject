@@ -58,6 +58,33 @@ When you tap alarm OFF it sets alarm_enable to 0 and updates the state text to s
 
 Whenever the current time matches the alarm time, regardless of which screen you're on, the song plays and alarm_enable resets to 0. If you happen to be on the alarm screen when that happens the state text updates to OFF right away instead of waiting for you to leave and come back.
 
+# Coffee control ('coffee_screen.c') 
+
+The coffee system uses LED1 on PF1 to represent the coffee machine. 
+coffee_init - configures PF1 to become an output, initially setting the coffee machine to off. This system tracks whether the coffee machine is enabled, currently running and the RTC time at which the current coffee cycle turned on.
+
+draw_coffee_screen - draws the coffee interface, including a shared wake-up time, controls for hour and minute, WAKE UP TO SUNRISE button, Coffee ON/OFF controls and current coffee state. The variables alarm_hour, alarm_minute and wakeup_sunrise have been shared with the alarm system to simplify the overall logic.
+
+draw_coffee_time - updates the displayed wake-up setting. When wakeup_sunrise == 0, the selected wake-up time is displayed on the board in Hour: Minute format. When wakeup_sunrise is enabled, the display shows SUNRISE.
+
+draw_coffee_state - displays whether the coffee system is currently ON or OF. 
+
+handle_coffee_touch - handles touchscreen controls using the touch_rect function. The hour and minute controls reuse the alarms change_hour and change_minute functions. The WAKE UP TO SUNRISE button toggles wakeup_sunrise between 0 and 1.
+
+check_coffee - called continuously from the main loop. If coffee is disabled, LED1 remains off. In the manual wake-up mode, the check_time function compares the RTC value with the shared wake-up time. When the times match, the coffee machine LED1 turns on and the current RTC epoch is stored as coffee_start_time.
+
+Once turned ON, the coffee machine remains running for 'COFFEE_RUN_TIME', which is set to 1800 seconds or 30 minutes. The current RTC epoch is compared with 'coffee_start_time' on each loop. Once 1800 seconds pass, the coffee machine automatically turns off, and LED1 turns off.
+
+## Coffee screen behaviour 
+- Hour +/- changes the shared wake-up hour.
+- Minute +/- changes the shared wake-up minute in 5-minute steps.
+- WAKE UP TO SUNRISE toggles the shared `wakeup_sunrise` setting used by both the alarm and coffee systems.
+- Coffee ON enables the coffee system.
+- Coffee OFF disables the coffee system and immediately turns the coffee machine off.
+- At the selected manual wake-up time, LED1 turns on to represent the coffee machine running.
+- The coffee machine automatically turns off 30 minutes after it starts.
+- The return button takes the user back to the home screen.
+
 ## Occupancy (`motion.c`)
 
 Two Port C switches act as motion sensors: `OUTSIDE` = PC7, `INSIDE` = PC6.
