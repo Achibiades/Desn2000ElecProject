@@ -403,6 +403,61 @@
               <FileType>2</FileType>
               <FilePath>.\Sources\startup_stm32f10x_hd.s</FilePath>
             </File>
+            <File>
+              <FileName>adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\sources\adc.c</FilePath>
+            </File>
+            <File>
+              <FileName>alarm_screen.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\sources\alarm_screen.c</FilePath>
+            </File>
+            <File>
+              <FileName>coffee_screen.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\sources\coffee_screen.c</FilePath>
+            </File>
+            <File>
+              <FileName>heating.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\sources\heating.c</FilePath>
+            </File>
+            <File>
+              <FileName>homepage.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\sources\homepage.c</FilePath>
+            </File>
+            <File>
+              <FileName>light_screen.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\sources\light_screen.c</FilePath>
+            </File>
+            <File>
+              <FileName>lock_screen.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\sources\lock_screen.c</FilePath>
+            </File>
+            <File>
+              <FileName>motion.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\sources\motion.c</FilePath>
+            </File>
+            <File>
+              <FileName>rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\sources\rtc.c</FilePath>
+            </File>
+            <File>
+              <FileName>temp_screen.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\sources\temp_screen.c</FilePath>
+            </File>
+            <File>
+              <FileName>songs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\sources\songs.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
