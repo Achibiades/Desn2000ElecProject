@@ -76,12 +76,14 @@ RGB0 shows:
 ## Auto-shutdown (`check_auto_shutdown`, `main.c`)
 
 - **EXIT** arms a countdown (`shutdown_armed = 1`, `arm_time = now`).
-- `touched` or `inside` **cancels** the countdown. If systems were off, runs `startup_all()`, systems_active = 1, unlock_all() + heating_on()  + lights_on().
-- After `SHUTDOWN_TIMEOUT_S` seconds armed, `shutdown_all()` fires, systems_active = 0, lock_all()  + heating_off() + lights_off().
+- `touched` or `inside` **cancels** the countdown. If systems were off, runs `startup_all()`, `systems_active = 1, unlock_all() + heating_on()  + lights_on()`.
+- After `SHUTDOWN_TIMEOUT_S` seconds armed, `shutdown_all()` fires, `systems_active = 0, lock_all()  + heating_off() + lights_off()`.
 
 `SHUTDOWN_TIMEOUT_S` is currently **10 s**. `systems_active` boots at **0**, so the house starts asleep until the first inside activity.
 
 ## Climate control (`heating.c`)
+
+**Temperature screen (UI 3):** adjusts `desired_temp` (default 25 °C) via +/- controls, which `check_climate()` uses as its target. Return button goes home.
 
 `temp_get_state(desired_temp)` (in `adc.c`) returns `TEMP_IDLE` if the current temp is within 1 °C of the desired temp. It returns`TEMP_HEAT` (too cold), or `TEMP_COOL` (too hot).
 
