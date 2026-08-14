@@ -139,3 +139,15 @@ dawn_wakeup_alarm - plays song 3, a shortened transcription of "Nyanyanyanyanyan
 `SystemInit()` must call `motion_init()`, `heating_init()`, and `setupADC()` before `main()`.
 `motion_update()` → `check_auto_shutdown()` → `check_climate()` → touch handling.
 
+## Peripherals Used:
+
+LED1: coffee
+LED2: all lights enabled
+LED4: alarm
+LED5: all locks enabled
+LED6: blinds
+RGB0: occupied/unoccupied (green vs red)
+RBG1: heating/cool/target temp (red vs blue vs green)
+sw1/sw0: motion
+potentiometer: temp
+PB1: doorbell
