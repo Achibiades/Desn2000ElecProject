@@ -47,7 +47,7 @@ int main() {
     int alarm_enable = 0;
 
     // Alarm/Coffee
-    int wakeup_sunrise = 1;
+    int wakeup_sunrise = 0;
 
     // Occupancy
     int inside = 0;   // 0 = outside, 1 = inside
@@ -95,7 +95,7 @@ int main() {
 				
 
 
-        check_coffee(time_str, alarm_hour, alarm_minute, wakeup_sunrise, now);
+        check_coffee(time_str, date_str, alarm_hour, alarm_minute, wakeup_sunrise, now);
 
         if (curr_ui != prev_ui) {
             render_screen(curr_ui, alarm_hour, alarm_minute, alarm_enable, desired_temp, wakeup_sunrise);
