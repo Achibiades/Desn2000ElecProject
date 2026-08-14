@@ -2,7 +2,9 @@
 #include "../LCD/lcd_grph.h"
 #include "../Headers/SystemInit.h"
 #include "../Headers/draw_screens.h"
+#include "../Headers/rtc.h"
 #include <stdio.h>
+#include <string.h>
 
 #define COFFEE_RUN_TIME 1800
 
@@ -387,11 +389,16 @@ void handle_coffee_touch(int tx, int ty,
 
 
 void check_coffee(char *time_str,
+                  char *date_str,
                   int hour,
                   int minute,
                   int wakeup_sunrise,
                   unsigned int now)
 {
+    unsigned int day_of_year;
+    unsigned int sunrise_index;
+    unsigned int sunrise_count;
+
     /* Coffee completely disabled */
     if (!coffee_enable)
     {
@@ -423,7 +430,6 @@ void check_coffee(char *time_str,
         {
             coffee_running = 1;
             coffee_start_time = now;
-
             GPIOF->BSRR = GPIO_BSRR_BS1;
         }
         else
@@ -436,12 +442,31 @@ void check_coffee(char *time_str,
     else
     {
         /*
-         * coffee_sunrise will be checked here.
-         *
-         * I have left this unimplemented until the relationship
-         * between each coffee_sunrise[] entry and its date is known.
+         * day_of_year_from_str() returns 1 for 01/01.
+         * coffee_sunrise[] starts at index 0, so subtract 1.
          */
+        day_of_year = day_of_year_from_str(date_str);
+        sunrise_count = sizeof(coffee_sunrise) / sizeof(coffee_sunrise[0]);
 
-        GPIOF->BSRR = GPIO_BSRR_BR1;
+        if (day_of_year >= 1 && day_of_year <= sunrise_count)
+        {
+            sunrise_index = day_of_year - 1;
+
+            if (!strcmp(time_str, coffee_sunrise[sunrise_index]))
+            {
+                coffee_running = 1;
+                coffee_start_time = now;
+                GPIOF->BSRR = GPIO_BSRR_BS1;
+            }
+            else
+            {
+                GPIOF->BSRR = GPIO_BSRR_BR1;
+            }
+        }
+        else
+        {
+            /* Invalid date index: keep the coffee machine off */
+            GPIOF->BSRR = GPIO_BSRR_BR1;
+        }
     }
 }
