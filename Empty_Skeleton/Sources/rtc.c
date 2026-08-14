@@ -6,6 +6,8 @@
 #include "stdio.h"
 #include "time.h"
 
+
+
 void rtc_set_time(unsigned int epoch_seconds) {
     // Make sure no earlier write is still in progress
     while (!(RTC->CRL & RTC_CRL_RTOFF))
@@ -174,4 +176,17 @@ void draw_current_time(char *time_str, char *date_str) {
     lcd_putString_scaled(145, 245, (unsigned char *)time_str, 2);
 
     lcd_putString(150, 275, (unsigned char *)date_str);
+}
+
+unsigned int day_of_year_from_str(char *date_str) {
+    static const unsigned int cum_days[12] =
+        {0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334};
+    unsigned int day, month, doy;
+
+    // date_str is "DD/MM"
+    sscanf(date_str, "%u/%u", &day, &month);
+
+    doy = cum_days[month - 1] + day;
+
+    return doy;
 }
