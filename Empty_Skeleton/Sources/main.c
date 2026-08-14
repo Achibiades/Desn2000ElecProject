@@ -13,7 +13,6 @@
 
 #define SHUTDOWN_TIMEOUT_S 10
 
-// Forward declarations -- definitions live underneath main
 void check_alarm(char *time_str, int alarm_hour, int alarm_minute,
                  int *alarm_enable, int curr_ui);
 void render_screen(int curr_ui, int alarm_hour, int alarm_minute, int alarm_enable, int desired_temp, int wakeup_sunrise);
@@ -35,8 +34,8 @@ int main() {
     //UI
     int x_coord = 0;
     int y_coord = 0;
-	
-		int time_counter = 9999; // allows 1 cycle between homescreen loading and timer appearing
+
+	int time_counter = 9999; // allows 1 cycle between homescreen loading and timer appearing
 
     int curr_ui = 0;
     int prev_ui = -1; // -1 so the home screen draws on the first loop
@@ -64,7 +63,7 @@ int main() {
     char time_str[6];
     char date_str[6];
 
-    // Coffee 
+    // Coffee
     coffee_init();
     // Peripherals are brought up by SystemInit() before main runs
 
@@ -74,8 +73,6 @@ int main() {
         int ev = motion_update(&inside);
 
         int touched = (touch_read_xy(&x_coord, &y_coord) == 1);
-        //x_coord = map_pixel(x_coord, 10, 234, 0, 240);
-        //y_coord = map_pixel(y_coord, 0, 250, 0, 320);
 
         get_real_time(time_str, date_str);
 
@@ -97,7 +94,7 @@ int main() {
 				}
 
         check_coffee(time_str, alarm_hour, alarm_minute, wakeup_sunrise);
-      
+
         if (curr_ui != prev_ui) {
             render_screen(curr_ui, alarm_hour, alarm_minute, alarm_enable, desired_temp, wakeup_sunrise);
             prev_ui = curr_ui;
@@ -136,7 +133,7 @@ void check_alarm(char *time_str, int alarm_hour, int alarm_minute,
 }
 
 
-// 0=Home, 1=Coffee, 2=Light, 3=Temp, 4=Alarm, 5=Security, 
+// 0=Home, 1=Coffee, 2=Light, 3=Temp, 4=Alarm, 5=Security,
 void render_screen(int curr_ui, int alarm_hour, int alarm_minute, int alarm_enable, int desired_temp, int wakeup_sunrise) {
     if (curr_ui == 0) {
         draw_home_screen();
@@ -156,7 +153,7 @@ void render_screen(int curr_ui, int alarm_hour, int alarm_minute, int alarm_enab
     }
 }
 
-// 0=Home, 1=Coffee, 2=Light, 3=Temp, 4=Alarm, 5=Security, 6=Sound
+// 0=Home, 1=Coffee, 2=Light, 3=Temp, 4=Alarm, 5=Lock, 6=Sound
 void handle_touch(int x_coord, int y_coord, int *curr_ui,
                   int *alarm_hour, int *alarm_minute,
                   int *alarm_enable, int *wakeup_sunrise, int *desired_temp) {
@@ -197,14 +194,14 @@ void handle_touch(int x_coord, int y_coord, int *curr_ui,
             handle_lock_touch(x_coord, y_coord);
         }
 
-    } 
+    }
 }
 
 
 void handle_home_touch(int x_coord, int y_coord, int *curr_ui) {
     char str[32];
 
-    if (touch_rect(20, 50, 110, 120, x_coord, y_coord)) {          // Coffee
+    if (touch_rect(20, 50, 110, 120, x_coord, y_coord)) { // Coffee
         *curr_ui = 1;
     } else if (touch_rect(20, 140, 110, 210, x_coord, y_coord)) {  // Light
         *curr_ui = 2;
@@ -212,9 +209,9 @@ void handle_home_touch(int x_coord, int y_coord, int *curr_ui) {
         *curr_ui = 3;
     } else if (touch_rect(130, 50, 220, 120, x_coord, y_coord)) {  // Alarm
         *curr_ui = 4;
-    } else if (touch_rect(130, 140, 220, 210, x_coord, y_coord)) { // Security
+    } else if (touch_rect(130, 140, 220, 210, x_coord, y_coord)) { // Lock
         *curr_ui = 5;
-    } 
+    }
 
     sprintf(str, "%d, %d", x_coord, y_coord);
     lcd_fontColor(WHITE, BLACK);
@@ -225,7 +222,6 @@ void handle_home_touch(int x_coord, int y_coord, int *curr_ui) {
 
 
 void shutdown_all(int *systems_active, int curr_ui) {
-    // TODO:
     lock_all(curr_ui);
     heating_off();
     lights_off(curr_ui);
@@ -234,18 +230,17 @@ void shutdown_all(int *systems_active, int curr_ui) {
 
 
 // Arms a 5-min countdown when an exit is registered. Any inside activity
-// (a touch or the inside sensor being active) cancels it outright, so the
-// countdown only completes if nobody is detected inside until it elapses.
+//  cancels it, so the countdown only completes if nobody is detected inside
 void check_auto_shutdown(int ev, int touched, int inside, unsigned int now,
     int *shutdown_armed, unsigned int *arm_time,
     int *systems_active, int curr_ui) {
 
-    // A fresh exit arms the countdown and wins outright this pass
+    // exit arms the countdown
     if (ev == MOTION_EXIT) {
         *shutdown_armed = 1;
         *arm_time = now;
     }
-    // Otherwise, inside activity cancels a pending countdown
+    //inside activity cancels a pending countdown
     else if (touched || inside) {
         *shutdown_armed = 0;
         if (*systems_active == 0) {
@@ -260,7 +255,6 @@ void check_auto_shutdown(int ev, int touched, int inside, unsigned int now,
 }
 
 void startup_all(int *systems_active, int curr_ui) {
-    // TODO:
     unlock_all(curr_ui);
     heating_on();
     lights_on(curr_ui);

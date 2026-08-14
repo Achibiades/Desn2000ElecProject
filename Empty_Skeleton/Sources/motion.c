@@ -19,9 +19,7 @@ static void setup_timer(void) {
     TIM2->CR1 |= 0x1;
 }
 
-// Drive the RGB LED: green for entered, red for exited.
-// BSRR sets pins in the low half, clears them in the high half (<< 16),
-// so one write turns the wanted colour on and the others off atomically.
+// green for entered, red for exited.
 static void rgb_set_green(void) {
     GPIOA->BSRR = RGB_GREEN | ((RGB_RED | RGB_BLUE) << 16);
 }
@@ -34,13 +32,11 @@ static void rgb_off(void) {
 
 void motion_init(void) {
     RCC->APB2ENR |= RCC_APB2ENR_IOPCEN;
-    RCC->APB2ENR |= RCC_APB2ENR_IOPAEN;   // Port A for the RGB LED
+    RCC->APB2ENR |= RCC_APB2ENR_IOPAEN;   // Port a
 
-    GPIOC->CRL &= 0x00FFFFFF;   // PC6, PC7 as inputs (switches)
+    GPIOC->CRL &= 0x00FFFFFF;   // PC6, PC7 switches
     GPIOC->CRL |= 0x44000000;
 
-    // PA8, PA9, PA10 are in CRH (pins 8-15). Configure just those three
-    // nibbles as output push-pull 2 MHz (0010), leaving the rest of CRH alone.
     GPIOA->CRH &= ~(0x00000FFF);   // clear PA8, PA9, PA10 nibbles
     GPIOA->CRH |=  0x00000222;     // PA8/9/10: output push-pull 2 MHz
 

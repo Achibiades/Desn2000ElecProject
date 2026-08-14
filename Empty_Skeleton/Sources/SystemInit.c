@@ -9,52 +9,12 @@
 #include "../Headers/motion.h"
 #include "../Headers/adc.h"
 
-
-// ==========================================
-// FUNCTION PROTOTYPES
-// ==========================================
-
-
-// ==========================================
-// MAIN FUNCTION
-// ==========================================
-/* int main(void) {
-    // 1. Hardware Initialization
-    lcd_init();
-    spi_init();
-
-    // Clear the screen to a solid background so text is readable
-    lcd_fillScreen(BLACK);
-
-    // 2. State Variables
-    int x_coord = 0;
-    int y_coord = 0;
-
-    // 3. Infinite Polling Loop
-    while (1) {
-
-        // Read raw coordinates first
-        if (touch_read_xy(&x_coord, &y_coord) == 1) {
-
-            // Map the coordinates ONLY when a new touch is detected
-            x_coord = map_pixel(x_coord, 10, 234, 0, 320);
-            y_coord = map_pixel(y_coord, 15, 240, 0, 240);
-
-            // Print the coordinates to the screen in real-time
-            display_touch_coordinates(x_coord, y_coord);
-        }
-    }
-
-    return 0;
-}
-*/
-
 void setup_DAC(void) {
 		RCC->APB2ENR |= RCC_APB2ENR_IOPAEN;
 		GPIOA->CRL &= ~GPIO_CRL_CNF4;
 		RCC->APB1ENR |= RCC_APB1ENR_DACEN;
 		DAC->CR |= 0x1;
-		
+
 }
 
 void spi_init() {
@@ -173,13 +133,12 @@ int touch_rect(unsigned short x0, unsigned short y0, unsigned short x1, unsigned
 
 int touch_read_xy(int *x, int *y) {
 
-    if (GPIOE->IDR & GPIO_IDR_IDR5) { // essentially no touch.
+    if (GPIOE->IDR & GPIO_IDR_IDR5) {
         return 0;
     }
 
-    //Read X co-ordinate from the touch screen controller
     *x = touch_read(0xD8);
-    //Read Y co-ordinate from the touch screen controller
+
     *y = touch_read(0x98);
 
     return 1;
@@ -188,37 +147,24 @@ int touch_read_xy(int *x, int *y) {
 void display_touch_coordinates(int touch_x, int touch_y) {
     char coord_str[32];
 
-    // Pad with zeros (e.g., "045") to ensure old text is completely overwritten
     sprintf(coord_str, "X:%03d Y:%03d", touch_x, touch_y);
 
-    // Set font colors (Foreground: White, Background: Black)
     lcd_fontColor(WHITE, BLACK);
 
-    // Print the string at a fixed location (x=10, y=10)
     lcd_putString(10, 10, (unsigned char *)coord_str);
 }
 
 void led_ladder_init(void)
 {
-    /* Enable the GPIOF peripheral clock */
     RCC->APB2ENR |= RCC_APB2ENR_IOPFEN;
 
-    /*
-     * Each PF0-PF7 configuration field is set to 0x2:
-     *
-     * CNF  = 00: general-purpose push-pull
-     * MODE = 10: output at 2 MHz
-     *
-     * GPIOF->CRL controls pins PF0-PF7.
-     */
     GPIOF->CRL = 0x22222222U;
 
-    /* Start with all eight LEDs off */
+    //start with LEDs off
     GPIOF->BRR = 0x00FFU;
-	
-		// also enabling pushbutton E1 here
-		GPIOE->CRL &= ~GPIO_CRL_CNF1;
-		GPIOE->CRL |= GPIO_CRL_CNF1_1;
+
+	GPIOE->CRL &= ~GPIO_CRL_CNF1;
+	GPIOE->CRL |= GPIO_CRL_CNF1_1;
 }
 
 void SystemInit() {

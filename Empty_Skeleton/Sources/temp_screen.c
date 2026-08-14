@@ -2,7 +2,6 @@
 #include "../LCD/lcd_grph.h"
 #include "../Headers/draw_screens.h"
 
-// Static layout for the temperature adjustment screen
 void draw_temp_screen(void) {
     lcd_fillScreen(WHITE);
 
@@ -16,30 +15,29 @@ void draw_temp_screen(void) {
 
     lcd_fillRect(30, 90, 210, 160, LIGHT_GRAY);
 
-    // Plus (+) button
+    // Plus button
     lcd_fillRect(30, 180, 110, 230, LIGHT_GRAY);
     lcd_fontColor(BLACK, LIGHT_GRAY);
     lcd_putString_scaled(62, 195, (unsigned char *)"+", 3);
 
-    // Minus (-) button
+    // Minus button
     lcd_fillRect(130, 180, 210, 230, LIGHT_GRAY);
     lcd_fontColor(BLACK, LIGHT_GRAY);
     lcd_putString_scaled(162, 195, (unsigned char *)"-", 3);
 }
 
-// Dynamically draws/updates the desired temperature value inside the box
+// updates the desired temp value
 void draw_desired_temp(int temp, int x, int y) {
     char temp_str[8];
 
     snprintf(temp_str, sizeof(temp_str), "%2d C", temp);
 
-    // Clear inner box and redraw value
     lcd_fillRect(x, y, x + 160, y + 55, LIGHT_GRAY);
     lcd_fontColor(BLACK, LIGHT_GRAY);
     lcd_putString_scaled(x + 20, y + 12, (unsigned char *)temp_str, 4);
 }
 
-// Modifies the desired temperature value within a safe range (10C - 30C)
+// keeps desired temp in a safe range (10C - 30C)
 void change_temp(int *desired_temp, int change) {
     if (change == 1) {
         *desired_temp += 1;
@@ -54,9 +52,9 @@ void change_temp(int *desired_temp, int change) {
     }
 }
 
-// Processes touch events specific to the temperature screen
 void handle_temp_touch(int x_coord, int y_coord, int *curr_ui, int *desired_temp) {
-    if (touch_rect(10, 10, 70, 40, x_coord, y_coord)) {             // Return
+    //Return
+    if (touch_rect(10, 10, 70, 40, x_coord, y_coord)) {
         *curr_ui = 0;
     } else if (touch_rect(30, 180, 110, 230, x_coord, y_coord)) {    // Temp +
         change_temp(desired_temp, 1);

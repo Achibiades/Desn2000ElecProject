@@ -1,18 +1,18 @@
 #include "../Headers/stm32f103xe.h"
 #include "../Headers/heating.h"
 
-#define PASSIVE_SETTLE_S 5     // let blinds work 5s before active heating/cooling
+#define PASSIVE_SETTLE_S 5     // blinds work 5s before active heating/cooling
 
 //   red   = active heating engaged
 //   blue  = active cooling engaged
 //   green = at correct temperature
-//   off   = system shut down, OR out of range but only passively correcting
+//   off   = system shut down
 #define RGB1_BLUE   (1 << 2)   // PE2
 #define RGB1_RED    (1 << 3)   // PE3
 #define RGB1_GREEN  (1 << 4)   // PE4
 
-// Blinds: LED6 / PF6 (high = open).
-#define BLINDS_PIN  (1 << 6)   // PF6
+// LED6 / PF6 (high = open).
+#define BLINDS_PIN  (1 << 6)
 
 
 static void rgb1_red(void) {
@@ -67,9 +67,8 @@ void heating_init(void) {
 // Prioritises passive heating/cooling (blinds) first, escalating to active
 // heating/cooling only if still out of range after PASSIVE_SETTLE_S seconds.
 // A state change restarts that settle window.
-// IDLE stops active correction but leaves the blinds as they are.
-// RGB1 shows red/blue only once active correction is engaged; during the
-// passive-only window it stays off.
+// IDLE stops active heating but leaves the blinds
+// RGB1 shows red/blue only once active heating is engaged
 void check_climate(unsigned int now, int systems_active,
                    temp_state_t *prev_state, unsigned int *state_since, int desired_temp) {
     temp_state_t s;
