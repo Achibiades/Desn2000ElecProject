@@ -82,23 +82,13 @@ static void draw_coffee_time(int hour, int minute, int wakeup_sunrise)
 
     if (wakeup_sunrise)
     {
-        lcd_putString_scaled(
-            43,
-            108,
-            (unsigned char *)"SUNRISE MODE",
-            2
-        );
+        lcd_putString_scaled(43, 108, (unsigned char *)"SUNRISE MODE", 2);
     }
     else
     {
         snprintf(time_str, 6, "%02d:%02d", hour, minute);
-
-        lcd_putString_scaled(
-            60,
-            104,
-            (unsigned char *)time_str,
-            4
-        );
+        lcd_putString_scaled(60, 104, (unsigned char *)time_str, 4);
+      
     }
 }
 
@@ -110,19 +100,11 @@ static void draw_coffee_state(void)
 
     if (coffee_enable)
     {
-        lcd_putString(
-            205,
-            21,
-            (unsigned char *)"ON"
-        );
+        lcd_putString(205, 21, (unsigned char *)"ON");
     }
     else
     {
-        lcd_putString(
-            205,
-            21,
-            (unsigned char *)"OFF"
-        );
+        lcd_putString(205, 21, (unsigned char *)"OFF");
     }
 }
 
@@ -142,264 +124,135 @@ void draw_coffee_screen(int hour, int minute, int wakeup_sunrise)
 {
     lcd_fillScreen(WHITE);
 
-    /* Return button */
+    //Return button 
     lcd_fillRect(10, 10, 70, 40, LIGHT_GRAY);
     lcd_fontColor(BLACK, LIGHT_GRAY);
     lcd_putString(16, 21, (unsigned char *)"return");
 
-    /* Coffee state */
+    //Coffee state
     lcd_fontColor(BLACK, WHITE);
-    lcd_putString(
-        110,
-        21,
-        (unsigned char *)"Coffee State:"
-    );
+    lcd_putString(110, 21, (unsigned char *)"Coffee State:");
 
     draw_coffee_state();
 
-    /* Title */
-    lcd_putString_scaled(
-        60,
-        55,
-        (unsigned char *)"COFFEE TIME",
-        2
-    );
+    //Title 
+    lcd_putString_scaled(60, 55, (unsigned char *)"COFFEE TIME", 2);
 
-    /* Time / sunrise display */
-    draw_coffee_time(
-        hour,
-        minute,
-        wakeup_sunrise
-    );
+    //Time / sunrise display 
+    draw_coffee_time(hour, minute, wakeup_sunrise);
 
-    /* Labels */
+    // Labels 
     lcd_fontColor(BLACK, WHITE);
+    lcd_putString(49, 161, (unsigned char *)"HOUR");
+    lcd_putString(163, 161, (unsigned char *)"MIN");
 
-    lcd_putString(
-        49,
-        161,
-        (unsigned char *)"HOUR"
-    );
-
-    lcd_putString(
-        163,
-        161,
-        (unsigned char *)"MIN"
-    );
-
-    /* Hour + / - */
+    // Hour + / - 
     lcd_fillRect(20, 180, 60, 220, LIGHT_GRAY);
     lcd_fillRect(70, 180, 110, 220, LIGHT_GRAY);
 
     lcd_fontColor(BLACK, LIGHT_GRAY);
+    lcd_putString_scaled(32, 192, (unsigned char *)"+", 2);
 
-    lcd_putString_scaled(
-        32,
-        192,
-        (unsigned char *)"+",
-        2
-    );
+    lcd_putString_scaled(82, 192, (unsigned char *)"-", 2);
 
-    lcd_putString_scaled(
-        82,
-        192,
-        (unsigned char *)"-",
-        2
-    );
-
-    /* Minute + / - */
+    // Minute + / - 
     lcd_fillRect(130, 180, 170, 220, LIGHT_GRAY);
     lcd_fillRect(180, 180, 220, 220, LIGHT_GRAY);
 
-    lcd_putString_scaled(
-        142,
-        192,
-        (unsigned char *)"+",
-        2
-    );
+    lcd_putString_scaled(142, 192, (unsigned char *)"+", 2);
 
-    lcd_putString_scaled(
-        192,
-        192,
-        (unsigned char *)"-",
-        2
-    );
+    lcd_putString_scaled( 192, 192, (unsigned char *)"-", 2);
 
-    /* Sunrise mode */
+    // Sunrise mode 
     lcd_fillRect(20, 235, 220, 260, LIGHT_GRAY);
 
-    lcd_putString(
-        44,
-        243,
-        (unsigned char *)"WAKE UP TO SUNRISE"
-    );
+    lcd_putString(44, 243, (unsigned char *)"WAKE UP TO SUNRISE");
 
-    /* Coffee ON */
+    // Coffee ON 
     lcd_fillRect(20, 275, 110, 305, LIGHT_GRAY);
 
-    lcd_putString(
-        33,
-        285,
-        (unsigned char *)"Coffee ON"
-    );
+    lcd_putString(33, 285, (unsigned char *)"Coffee ON");
 
-    /* Coffee OFF */
+    // Coffee OFF 
     lcd_fillRect(130, 275, 220, 305, LIGHT_GRAY);
 
-    lcd_putString(
-        139,
-        285,
-        (unsigned char *)"Coffee OFF"
-    );
+    lcd_putString(139, 285, (unsigned char *)"Coffee OFF");
 }
 
 
-void handle_coffee_touch(int tx, int ty,
-                         int *hour,
-                         int *minute,
-                         int *wakeup_sunrise)
+void handle_coffee_touch(int tx, int ty, int *hour, int *minute, int *wakeup_sunrise)
 {
-    /* Hour + */
-    if (touch_rect(20, 180, 60, 220, tx, ty))
-    {
-        /*
-         * If sunrise mode was active, this exits sunrise
-         * mode first. The old hour/minute were never changed,
-         * so we continue from the previous manual time.
-         */
+    // Hour + 
+    if (touch_rect(20, 180, 60, 220, tx, ty)) {
         *wakeup_sunrise = 0;
-
         change_hour(hour, 1);
-
-        draw_coffee_time(
-            *hour,
-            *minute,
-            *wakeup_sunrise
-        );
+        draw_coffee_time(*hour, *minute, *wakeup_sunrise);
     }
 
-    /* Hour - */
-    else if (touch_rect(70, 180, 110, 220, tx, ty))
+    // Hour - 
+    else if (touch_rect(70, 180, 110, 220, tx, ty)) 
     {
         *wakeup_sunrise = 0;
-
         change_hour(hour, 0);
-
-        draw_coffee_time(
-            *hour,
-            *minute,
-            *wakeup_sunrise
-        );
+        draw_coffee_time(*hour, *minute, *wakeup_sunrise);
     }
 
-    /* Minute + */
+    // Minute + 
     else if (touch_rect(130, 180, 170, 220, tx, ty))
     {
         *wakeup_sunrise = 0;
-
         change_minute(minute, 1);
-
-        draw_coffee_time(
-            *hour,
-            *minute,
-            *wakeup_sunrise
-        );
+        draw_coffee_time(*hour, *minute, *wakeup_sunrise);
     }
 
-    /* Minute - */
+    // Minute - 
     else if (touch_rect(180, 180, 220, 220, tx, ty))
     {
         *wakeup_sunrise = 0;
-
         change_minute(minute, 0);
-
-        draw_coffee_time(
-            *hour,
-            *minute,
-            *wakeup_sunrise
-        );
+        draw_coffee_time(*hour, *minute, *wakeup_sunrise);
     }
 
-    /* Sunrise mode ON/OFF */
+    // Sunrise mode ON/OFF 
     else if (touch_rect(20, 235, 220, 260, tx, ty))
     {
         if (*wakeup_sunrise == 0)
         {
-            /*
-             * Enter sunrise mode.
-             * hour/minute are left untouched so the manual
-             * time is preserved.
-             */
             *wakeup_sunrise = 1;
         }
         else
         {
-            /*
-             * Sunrise button pressed again while already
-             * in sunrise mode.
-             *
-             * Return to the previous manual time.
-             */
             *wakeup_sunrise = 0;
         }
 
-        /*
-         * Redraw immediately.
-         *
-         * Entering sunrise:
-         *     displays "SUNRISE MODE"
-         *
-         * Exiting sunrise:
-         *     displays previous HH:MM immediately
-         */
-        draw_coffee_time(
-            *hour,
-            *minute,
-            *wakeup_sunrise
-        );
+        draw_coffee_time(*hour, *minute, *wakeup_sunrise);
     }
 
-    /* Coffee ON */
+    // Coffee ON 
     else if (touch_rect(20, 275, 110, 305, tx, ty))
     {
-        /*
-         * Re-enable coffee.
-         * Do not change time or sunrise/manual mode.
-         */
         coffee_enable = 1;
-
         draw_coffee_state();
     }
 
-    /* Coffee OFF */
+    // Coffee OFF 
     else if (touch_rect(130, 275, 220, 305, tx, ty))
     {
-        /*
-         * Completely disable coffee, but preserve the
-         * selected time and sunrise/manual mode.
-         */
         coffee_enable = 0;
         coffee_running = 0;
-
         GPIOF->BSRR = GPIO_BSRR_BR1;
-
         draw_coffee_state();
     }
 }
 
 
-void check_coffee(char *time_str,
-                  char *date_str,
-                  int hour,
-                  int minute,
-                  int wakeup_sunrise,
-                  unsigned int now)
+void check_coffee(char *time_str, char *date_str, int hour, int minute, int wakeup_sunrise, unsigned int now)
 {
     unsigned int day_of_year;
     unsigned int sunrise_index;
     unsigned int sunrise_count;
 
-    /* Coffee completely disabled */
+    // Coffee completely disabled 
     if (!coffee_enable)
     {
         coffee_running = 0;
@@ -407,7 +260,7 @@ void check_coffee(char *time_str,
         return;
     }
 
-    /* Coffee already running */
+    // Coffee already running 
     if (coffee_running)
     {
         if ((now - coffee_start_time) >= COFFEE_RUN_TIME)
@@ -419,11 +272,10 @@ void check_coffee(char *time_str,
         {
             GPIOF->BSRR = GPIO_BSRR_BS1;
         }
-
         return;
     }
 
-    /* Manual wake-up mode */
+    // Manual wake-up mode 
     if (wakeup_sunrise == 0)
     {
         if (check_time(time_str, hour, minute))
@@ -438,20 +290,15 @@ void check_coffee(char *time_str,
         }
     }
 
-    /* Sunrise mode */
+    // Sunrise mode 
     else
     {
-        /*
-         * day_of_year_from_str() returns 1 for 01/01.
-         * coffee_sunrise[] starts at index 0, so subtract 1.
-         */
         day_of_year = day_of_year_from_str(date_str);
         sunrise_count = sizeof(coffee_sunrise) / sizeof(coffee_sunrise[0]);
 
         if (day_of_year >= 1 && day_of_year <= sunrise_count)
         {
             sunrise_index = day_of_year - 1;
-
             if (!strcmp(time_str, coffee_sunrise[sunrise_index]))
             {
                 coffee_running = 1;
@@ -465,7 +312,7 @@ void check_coffee(char *time_str,
         }
         else
         {
-            /* Invalid date index: keep the coffee machine off */
+            // Invalid date index: keep the coffee machine off 
             GPIOF->BSRR = GPIO_BSRR_BR1;
         }
     }
