@@ -42,7 +42,9 @@ void handle_temp_touch(int x_coord, int y_coord, int *curr_ui, int *desired_temp
 void coffee_init(void);
 void draw_coffee_screen(int hour, int minute, int wakeup_sunrise);
 void handle_coffee_touch(int tx, int ty, int *hour, int *minute, int *wakeup_sunrise);
-void check_coffee(char *time_str, int hour, int minute, int wakeup_sunrise);void draw_alarm_screen();
+void check_coffee(char *time_str, int hour, int minute, int wakeup_sunrise,  unsigned int now);
+
+void draw_alarm_screen();
 
 // Alarm Logic
 void change_minute(int *alarm_minute, int change);

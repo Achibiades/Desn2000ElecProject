@@ -93,7 +93,7 @@ int main() {
 						time_counter = time_counter + 1;
 				}
 
-        check_coffee(time_str, alarm_hour, alarm_minute, wakeup_sunrise);
+        check_coffee(time_str, alarm_hour, alarm_minute, wakeup_sunrise, now);
 
         if (curr_ui != prev_ui) {
             render_screen(curr_ui, alarm_hour, alarm_minute, alarm_enable, desired_temp, wakeup_sunrise);
