@@ -84,7 +84,7 @@ void rtc_init()
         }
 
         // Seed the counter with a known epoch timestamp
-        rtc_set_time(1785034140);
+        rtc_set_time(1786674652);
 
         // Record that setup has run so future resets skip this branch
         BKP->DR1 = 0xA5A5;
