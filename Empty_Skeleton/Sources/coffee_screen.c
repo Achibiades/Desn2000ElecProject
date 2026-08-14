@@ -11,6 +11,21 @@ static int coffee_running = 0;
 static unsigned int coffee_start_time = 0;
 
 
+/*
+ * Sunrise times will be stored here in HH:MM format.
+ *
+ * Example format:
+ *
+ * static const char coffee_sunrise[][6] = {
+ *     "05:42",
+ *     "05:43",
+ *     "05:44"
+ * };
+ *
+ * Actual values and their date mapping still need to be added.
+ */
+
+
 static void draw_coffee_time(int hour, int minute, int wakeup_sunrise)
 {
     char time_str[6];
@@ -200,6 +215,11 @@ void handle_coffee_touch(int tx, int ty,
     /* Hour + */
     if (touch_rect(20, 180, 60, 220, tx, ty))
     {
+        /*
+         * If sunrise mode was active, this exits sunrise
+         * mode first. The old hour/minute were never changed,
+         * so we continue from the previous manual time.
+         */
         *wakeup_sunrise = 0;
 
         change_hour(hour, 1);
@@ -253,11 +273,38 @@ void handle_coffee_touch(int tx, int ty,
         );
     }
 
-    /* Sunrise mode */
+    /* Sunrise mode ON/OFF */
     else if (touch_rect(20, 235, 220, 260, tx, ty))
     {
-        *wakeup_sunrise = 1;
+        if (*wakeup_sunrise == 0)
+        {
+            /*
+             * Enter sunrise mode.
+             * hour/minute are left untouched so the manual
+             * time is preserved.
+             */
+            *wakeup_sunrise = 1;
+        }
+        else
+        {
+            /*
+             * Sunrise button pressed again while already
+             * in sunrise mode.
+             *
+             * Return to the previous manual time.
+             */
+            *wakeup_sunrise = 0;
+        }
 
+        /*
+         * Redraw immediately.
+         *
+         * Entering sunrise:
+         *     displays "SUNRISE MODE"
+         *
+         * Exiting sunrise:
+         *     displays previous HH:MM immediately
+         */
         draw_coffee_time(
             *hour,
             *minute,
@@ -268,6 +315,10 @@ void handle_coffee_touch(int tx, int ty,
     /* Coffee ON */
     else if (touch_rect(20, 275, 110, 305, tx, ty))
     {
+        /*
+         * Re-enable coffee.
+         * Do not change time or sunrise/manual mode.
+         */
         coffee_enable = 1;
 
         draw_coffee_state();
@@ -276,6 +327,10 @@ void handle_coffee_touch(int tx, int ty,
     /* Coffee OFF */
     else if (touch_rect(130, 275, 220, 305, tx, ty))
     {
+        /*
+         * Completely disable coffee, but preserve the
+         * selected time and sunrise/manual mode.
+         */
         coffee_enable = 0;
         coffee_running = 0;
 
@@ -292,6 +347,7 @@ void check_coffee(char *time_str,
                   int wakeup_sunrise,
                   unsigned int now)
 {
+    /* Coffee completely disabled */
     if (!coffee_enable)
     {
         coffee_running = 0;
@@ -299,6 +355,7 @@ void check_coffee(char *time_str,
         return;
     }
 
+    /* Coffee already running */
     if (coffee_running)
     {
         if ((now - coffee_start_time) >= COFFEE_RUN_TIME)
@@ -314,6 +371,7 @@ void check_coffee(char *time_str,
         return;
     }
 
+    /* Manual wake-up mode */
     if (wakeup_sunrise == 0)
     {
         if (check_time(time_str, hour, minute))
@@ -328,8 +386,17 @@ void check_coffee(char *time_str,
             GPIOF->BSRR = GPIO_BSRR_BR1;
         }
     }
+
+    /* Sunrise mode */
     else
     {
+        /*
+         * coffee_sunrise will be checked here.
+         *
+         * I have left this unimplemented until the relationship
+         * between each coffee_sunrise[] entry and its date is known.
+         */
+
         GPIOF->BSRR = GPIO_BSRR_BR1;
     }
 }
