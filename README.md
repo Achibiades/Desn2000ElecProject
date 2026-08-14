@@ -58,7 +58,7 @@ When you tap alarm OFF it sets alarm_enable to 0 and updates the state text to s
 
 Whenever the current time matches the alarm time, regardless of which screen you're on, the song plays and alarm_enable resets to 0. If you happen to be on the alarm screen when that happens the state text updates to OFF right away instead of waiting for you to leave and come back.
 
-# Coffee control ('coffee_screen.c') 
+# Coffee control (`coffee_screen.c`) 
 
 The coffee system uses LED1 on PF1 to represent the coffee machine. 
 coffee_init - configures PF1 to become an output, initially setting the coffee machine to off. This system tracks whether the coffee machine is enabled, currently running and the RTC time at which the current coffee cycle turned on.
@@ -127,6 +127,13 @@ Blinds = PF6 (high = open), moves only on change.
 The `systems_active` gate stops `check_climate` re-enabling heating after a shutdown —
 it works with the explicit `heating_off()` in `shutdown_all()`.
 
+## Music and Songs (`songs.c`)
+udelay - delays for a given period in microseconds.
+play_tone - plays a given tone on the DAC.
+play_song - chooses 1 of 3 songs to play on the DAC.
+ring_doorbell - if the doorbell (Button PB1) is pressed, plays song 1, the doorbell.
+standard_wakeup_alarm - plays song 2, a short transcription of "The Third Sanctuary", by Toby Fox, transcribed using code provided by Sudarshan Manikandan.
+dawn_wakeup_alarm - plays song 3, a shortened transcription of "Nyanyanyanyanyanyanya!", by daniwell, transcribed by Christopher Hines.
 
 ## MAIN Loop order (`main.c`)
 `SystemInit()` must call `motion_init()`, `heating_init()`, and `setupADC()` before `main()`.
